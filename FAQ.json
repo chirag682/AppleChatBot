@@ -1,0 +1,166 @@
+[
+  {
+    "question": "What are the total hierarchies present?",
+    "answer": "SELECT COUNT(*) FROM hierarchy;"
+  },
+  {
+    "question": "What are the total annotations present?",
+    "answer": "SELECT COUNT(*) FROM annotations;"
+  },
+  {
+    "question": "Get all hierarchies where is_leaf is true.",
+    "answer": "SELECT * FROM hierarchy WHERE is_leaf = TRUE;"
+  },
+  {
+    "question": "Show all annotations added in the last 30 days.",
+    "answer": "SELECT * FROM annotations WHERE timestamp >= datetime('now', '-30 days');"
+  },
+  {
+    "question": "Get total spending from last month for hierarchies where is_forecast is true.",
+    "answer": "SELECT SUM(last_month_spending) FROM hierarchy WHERE is_forecast = TRUE;"
+  },
+  {
+    "question": "Get all completed annotations for a specific hierarchy.",
+    "answer": "SELECT *  FROM annotations WHERE hierarchy_id = ? AND annotation_status = 'COMPLETED';"
+  },
+  {
+    "question": "Find hierarchies with more than 5 first-party accounts.",
+    "answer": "SELECT *  FROM hierarchy  WHERE account_count_first_party > 5;"
+  },
+  {
+    "question": "Get the total CDN spending from last month.",
+    "answer": "SELECT SUM(last_month_cdn_spending) FROM hierarchy;"
+  },
+  {
+    "question": "Get the most recent annotation for a hierarchy.",
+    "answer": "SELECT *  FROM annotations WHERE hierarchy_id = ? ORDER BY timestamp DESC LIMIT 1;"
+  },
+  {
+    "question": "Find hierarchies that are not deleted.",
+    "answer": "SELECT * FROM hierarchy WHERE is_not_deleted = TRUE;"
+  },
+  {
+    "question": "Find annotations made by a specific user.",
+    "answer": "SELECT * FROM annotations WHERE username = ?;"
+  },
+  {
+    "question": "Count of annotations for each hierarchy.",
+    "answer": "SELECT hierarchy_id, COUNT(*) AS annotation_count FROM annotations GROUP BY hierarchy_id;"
+  },
+  {
+    "question": "Get hierarchies with group ID equal to 'abc'.",
+    "answer": "SELECT * FROM hierarchy WHERE group_id = 'abc';"
+  },
+  {
+    "question": "Find annotations that are yearly type.",
+    "answer": "SELECT * FROM annotations WHERE annotation_type = 'yearly';"
+  },
+  {
+    "question": "List all hierarchies with 'Finance' in their description.",
+    "answer": "SELECT * FROM hierarchy WHERE description LIKE '%Finance%';"
+  },
+  {
+    "question": "Get annotations for hierarchies marked as leaf nodes.",
+    "answer": "SELECT a.*  FROM annotations a JOIN hierarchy h ON a.hierarchy_id = h.id WHERE h.is_leaf = TRUE;"
+  },
+  {
+    "question": "Get the total number of users recorded in hierarchies.",
+    "answer": "SELECT SUM(user_count) FROM hierarchy;"
+  },
+  {
+    "question": "Get annotations created after January 1, 2024.",
+    "answer": "SELECT *  FROM annotations  WHERE timestamp >= '2024-01-01';"
+  },
+  {
+    "question": "List hierarchies where account_count_3pc is greater than 10.",
+    "answer": "SELECT * FROM hierarchy WHERE account_count_3pc > 10;"
+  },
+  {
+    "question": "Find the earliest annotation recorded.",
+    "answer": "SELECT *  FROM annotations  ORDER BY timestamp ASC  LIMIT 1;"
+  },
+  {
+    "question": "Get total last month spending for all hierarchies combined.",
+    "answer": "SELECT SUM(last_month_spending) FROM hierarchy;"
+  },
+  {
+    "question": "Find hierarchies that have no forecast data.",
+    "answer": "SELECT * FROM hierarchy WHERE is_forecast = FALSE;"
+  },
+  {
+    "question": "Get the number of distinct group IDs in the hierarchy table.",
+    "answer": "SELECT COUNT(DISTINCT group_id) FROM hierarchy;"
+  },
+  {
+    "question": "Get annotations with content containing the word 'urgent'.",
+    "answer": "SELECT * FROM annotations WHERE content LIKE '%urgent%';"
+  },
+  {
+    "question": "List all hierarchies where l4 is 'Finance'.",
+    "answer": "SELECT * FROM hierarchy WHERE l4 = 'Finance';"
+  },
+  {
+    "question": "Count how many annotations have 'IN_PROGRESS' status.",
+    "answer": "SELECT COUNT(*) FROM annotations WHERE annotation_status = 'IN_PROGRESS';"
+  },
+  {
+    "question": "Find annotations that are linked to deleted hierarchies.",
+    "answer": "SELECT a.*  FROM annotations a JOIN hierarchy h ON a.hierarchy_id = h.id WHERE h.is_not_deleted = FALSE;"
+  },
+  {
+    "question": "Find hierarchies where user_count exceeds 100.",
+    "answer": "SELECT * FROM hierarchy WHERE user_count > 100;"
+  },
+  {
+    "question": "List all annotations sorted by newest to oldest.",
+    "answer": "SELECT *  FROM annotations  ORDER BY timestamp DESC;"
+  },
+  {
+    "question": "Get the total number of domains recorded in hierarchies.",
+    "answer": "SELECT SUM(domain_count_cdn) FROM hierarchy;"
+  },
+  {
+    "question": "Get all hierarchies with 'Marketing' in their group_id.",
+    "answer": "SELECT * FROM hierarchy WHERE group_id LIKE '%Marketing%';"
+  },
+  {
+    "question": "Get annotations with hierarchy details.",
+    "answer": "SELECT a.*, h.l1, h.l2, h.l3 FROM annotations a JOIN hierarchy h ON a.hierarchy_id = h.id;"
+  },
+  {
+    "question": "Find hierarchies with no associated annotations.",
+    "answer": "SELECT h.* FROM hierarchy h LEFT JOIN annotations a ON h.id = a.hierarchy_id WHERE a.id IS NULL;"
+  },
+  {
+    "question": "Get the number of annotations for each hierarchy, including those without annotations.",
+    "answer": "SELECT h.id, h.l1, h.l2, COUNT(a.id) AS annotation_count FROM hierarchy h LEFT JOIN annotations a ON h.id = a.hierarchy_id GROUP BY h.id, h.l1, h.l2;"
+  },
+  {
+    "question": "Find hierarchies and their latest annotation (if available).",
+    "answer": "SELECT h.*, a.content AS latest_annotation FROM hierarchy h LEFT JOIN (SELECT hierarchy_id, content FROM annotations ORDER BY timestamp DESC LIMIT 1) a ON h.id = a.hierarchy_id;"
+  },
+  {
+    "question": "Get annotations linked to hierarchies marked as forecast.",
+    "answer": "SELECT a.* FROM annotations a JOIN hierarchy h ON a.hierarchy_id = h.id WHERE h.is_forecast = TRUE;"
+  },
+  {
+    "question": "Find hierarchies with annotations containing the word 'urgent'.",
+    "answer": "SELECT h.* FROM hierarchy h JOIN annotations a ON h.id = a.hierarchy_id WHERE a.content LIKE '%urgent%';"
+  },
+  {
+    "question": "Find the total annotation count for each group of hierarchies.",
+    "answer": "SELECT h.group_id, COUNT(a.id) AS annotation_count FROM hierarchy h LEFT JOIN annotations a ON h.id = a.hierarchy_id GROUP BY h.group_id;"
+  },
+  {
+    "question": "Get annotations created by 'john.doe@example.com' with hierarchy details.",
+    "answer": "SELECT a.*, h.l1, h.l2, h.l3 FROM annotations a JOIN hierarchy h ON a.hierarchy_id = h.id WHERE a.email = 'john.doe@example.com';"
+  },
+  {
+    "question": "Get annotations for hierarchies where last month's spending is greater than 5000.",
+    "answer": "SELECT a.* FROM annotations a JOIN hierarchy h ON a.hierarchy_id = h.id WHERE h.last_month_spending > 5000;"
+  },
+  {
+    "question": "Find hierarchies with annotations that are 'yearly' type and have more than 10 accounts.",
+    "answer": "SELECT h.* FROM hierarchy h JOIN annotations a ON h.id = a.hierarchy_id WHERE a.annotation_type = 'yearly' AND h.account_count_3pc > 10;"
+  }
+]

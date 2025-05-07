@@ -1,0 +1,1064 @@
+[
+    {
+        "label": "AIMessage",
+        "importPath": "langchain_core.messages",
+        "description": "langchain_core.messages",
+        "isExtraImport": true,
+        "detail": "langchain_core.messages",
+        "documentation": {}
+    },
+    {
+        "label": "AIMessage",
+        "importPath": "langchain_core.messages",
+        "description": "langchain_core.messages",
+        "isExtraImport": true,
+        "detail": "langchain_core.messages",
+        "documentation": {}
+    },
+    {
+        "label": "AIMessage",
+        "importPath": "langchain_core.messages",
+        "description": "langchain_core.messages",
+        "isExtraImport": true,
+        "detail": "langchain_core.messages",
+        "documentation": {}
+    },
+    {
+        "label": "HumanMessage",
+        "importPath": "langchain_core.messages",
+        "description": "langchain_core.messages",
+        "isExtraImport": true,
+        "detail": "langchain_core.messages",
+        "documentation": {}
+    },
+    {
+        "label": "SystemMessage",
+        "importPath": "langchain_core.messages",
+        "description": "langchain_core.messages",
+        "isExtraImport": true,
+        "detail": "langchain_core.messages",
+        "documentation": {}
+    },
+    {
+        "label": "HumanMessage",
+        "importPath": "langchain_core.messages",
+        "description": "langchain_core.messages",
+        "isExtraImport": true,
+        "detail": "langchain_core.messages",
+        "documentation": {}
+    },
+    {
+        "label": "AIMessage",
+        "importPath": "langchain_core.messages",
+        "description": "langchain_core.messages",
+        "isExtraImport": true,
+        "detail": "langchain_core.messages",
+        "documentation": {}
+    },
+    {
+        "label": "HumanMessage",
+        "importPath": "langchain_core.messages",
+        "description": "langchain_core.messages",
+        "isExtraImport": true,
+        "detail": "langchain_core.messages",
+        "documentation": {}
+    },
+    {
+        "label": "AIMessage",
+        "importPath": "langchain_core.messages",
+        "description": "langchain_core.messages",
+        "isExtraImport": true,
+        "detail": "langchain_core.messages",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain_core.prompts",
+        "description": "langchain_core.prompts",
+        "isExtraImport": true,
+        "detail": "langchain_core.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain_core.prompts",
+        "description": "langchain_core.prompts",
+        "isExtraImport": true,
+        "detail": "langchain_core.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain_core.prompts",
+        "description": "langchain_core.prompts",
+        "isExtraImport": true,
+        "detail": "langchain_core.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain_core.prompts",
+        "description": "langchain_core.prompts",
+        "isExtraImport": true,
+        "detail": "langchain_core.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain_core.prompts",
+        "description": "langchain_core.prompts",
+        "isExtraImport": true,
+        "detail": "langchain_core.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain_core.prompts",
+        "description": "langchain_core.prompts",
+        "isExtraImport": true,
+        "detail": "langchain_core.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "ChatPromptTemplate",
+        "importPath": "langchain_core.prompts",
+        "description": "langchain_core.prompts",
+        "isExtraImport": true,
+        "detail": "langchain_core.prompts",
+        "documentation": {}
+    },
+    {
+        "label": "HumanMessage",
+        "importPath": "langchain.schema",
+        "description": "langchain.schema",
+        "isExtraImport": true,
+        "detail": "langchain.schema",
+        "documentation": {}
+    },
+    {
+        "label": "AIMessage",
+        "importPath": "langchain.schema",
+        "description": "langchain.schema",
+        "isExtraImport": true,
+        "detail": "langchain.schema",
+        "documentation": {}
+    },
+    {
+        "label": "HumanMessage",
+        "importPath": "langchain.schema",
+        "description": "langchain.schema",
+        "isExtraImport": true,
+        "detail": "langchain.schema",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "get_analyze_query_prompt",
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "isExtraImport": true,
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "get_sql_generation_prompt",
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "isExtraImport": true,
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "get_report_url_prompt",
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "isExtraImport": true,
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "AgentState",
+        "importPath": "states.agent_state",
+        "description": "states.agent_state",
+        "isExtraImport": true,
+        "detail": "states.agent_state",
+        "documentation": {}
+    },
+    {
+        "label": "AgentState",
+        "importPath": "states.agent_state",
+        "description": "states.agent_state",
+        "isExtraImport": true,
+        "detail": "states.agent_state",
+        "documentation": {}
+    },
+    {
+        "label": "AgentState",
+        "importPath": "states.agent_state",
+        "description": "states.agent_state",
+        "isExtraImport": true,
+        "detail": "states.agent_state",
+        "documentation": {}
+    },
+    {
+        "label": "AgentState",
+        "importPath": "states.agent_state",
+        "description": "states.agent_state",
+        "isExtraImport": true,
+        "detail": "states.agent_state",
+        "documentation": {}
+    },
+    {
+        "label": "AgentState",
+        "importPath": "states.agent_state",
+        "description": "states.agent_state",
+        "isExtraImport": true,
+        "detail": "states.agent_state",
+        "documentation": {}
+    },
+    {
+        "label": "AgentState",
+        "importPath": "states.agent_state",
+        "description": "states.agent_state",
+        "isExtraImport": true,
+        "detail": "states.agent_state",
+        "documentation": {}
+    },
+    {
+        "label": "llm",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "llm",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "llm",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "llm",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "llm",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_table_names",
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "isExtraImport": true,
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "format_schema_info",
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "isExtraImport": true,
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "format_relations_info",
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "isExtraImport": true,
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "prepare_schema_data",
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "isExtraImport": true,
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_table_names",
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "isExtraImport": true,
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_table_schema",
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "isExtraImport": true,
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_table_relations",
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "isExtraImport": true,
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "safe_literal_eval",
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "isExtraImport": true,
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "apply_general_processing_with_llm",
+        "importPath": "utils.format_final_response",
+        "description": "utils.format_final_response",
+        "isExtraImport": true,
+        "detail": "utils.format_final_response",
+        "documentation": {}
+    },
+    {
+        "label": "generate_report_url",
+        "importPath": "utils.generate_report_url",
+        "description": "utils.generate_report_url",
+        "isExtraImport": true,
+        "detail": "utils.generate_report_url",
+        "documentation": {}
+    },
+    {
+        "label": "run_sql_query",
+        "importPath": "utils.run_sql_query",
+        "description": "utils.run_sql_query",
+        "isExtraImport": true,
+        "detail": "utils.run_sql_query",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "pandas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pandas",
+        "description": "pandas",
+        "detail": "pandas",
+        "documentation": {}
+    },
+    {
+        "label": "ast",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "ast",
+        "description": "ast",
+        "detail": "ast",
+        "documentation": {}
+    },
+    {
+        "label": "streamlit",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "streamlit",
+        "description": "streamlit",
+        "detail": "streamlit",
+        "documentation": {}
+    },
+    {
+        "label": "custom_sql_agent",
+        "importPath": "chatbot",
+        "description": "chatbot",
+        "isExtraImport": true,
+        "detail": "chatbot",
+        "documentation": {}
+    },
+    {
+        "label": "langgraph",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "langgraph",
+        "description": "langgraph",
+        "detail": "langgraph",
+        "documentation": {}
+    },
+    {
+        "label": "StateGraph",
+        "importPath": "langgraph.graph",
+        "description": "langgraph.graph",
+        "isExtraImport": true,
+        "detail": "langgraph.graph",
+        "documentation": {}
+    },
+    {
+        "label": "START",
+        "importPath": "langgraph.graph",
+        "description": "langgraph.graph",
+        "isExtraImport": true,
+        "detail": "langgraph.graph",
+        "documentation": {}
+    },
+    {
+        "label": "END",
+        "importPath": "langgraph.graph",
+        "description": "langgraph.graph",
+        "isExtraImport": true,
+        "detail": "langgraph.graph",
+        "documentation": {}
+    },
+    {
+        "label": "RunnableLambda",
+        "importPath": "langchain_core.runnables",
+        "description": "langchain_core.runnables",
+        "isExtraImport": true,
+        "detail": "langchain_core.runnables",
+        "documentation": {}
+    },
+    {
+        "label": "SQLDatabase",
+        "importPath": "langchain.utilities",
+        "description": "langchain.utilities",
+        "isExtraImport": true,
+        "detail": "langchain.utilities",
+        "documentation": {}
+    },
+    {
+        "label": "SQLDatabase",
+        "importPath": "langchain.utilities",
+        "description": "langchain.utilities",
+        "isExtraImport": true,
+        "detail": "langchain.utilities",
+        "documentation": {}
+    },
+    {
+        "label": "OllamaLLM",
+        "importPath": "langchain_ollama",
+        "description": "langchain_ollama",
+        "isExtraImport": true,
+        "detail": "langchain_ollama",
+        "documentation": {}
+    },
+    {
+        "label": "OllamaEmbeddings",
+        "importPath": "langchain_ollama",
+        "description": "langchain_ollama",
+        "isExtraImport": true,
+        "detail": "langchain_ollama",
+        "documentation": {}
+    },
+    {
+        "label": "ChatOllama",
+        "importPath": "langchain_community.chat_models",
+        "description": "langchain_community.chat_models",
+        "isExtraImport": true,
+        "detail": "langchain_community.chat_models",
+        "documentation": {}
+    },
+    {
+        "label": "ChatOllama",
+        "importPath": "langchain_community.chat_models",
+        "description": "langchain_community.chat_models",
+        "isExtraImport": true,
+        "detail": "langchain_community.chat_models",
+        "documentation": {}
+    },
+    {
+        "label": "ChatOllama",
+        "importPath": "langchain_community.chat_models",
+        "description": "langchain_community.chat_models",
+        "isExtraImport": true,
+        "detail": "langchain_community.chat_models",
+        "documentation": {}
+    },
+    {
+        "label": "generate_common_query",
+        "importPath": "tools",
+        "description": "tools",
+        "isExtraImport": true,
+        "detail": "tools",
+        "documentation": {}
+    },
+    {
+        "label": "generate_sql_node",
+        "importPath": "nodes.generate_sql_query",
+        "description": "nodes.generate_sql_query",
+        "isExtraImport": true,
+        "detail": "nodes.generate_sql_query",
+        "documentation": {}
+    },
+    {
+        "label": "run_query_and_handle_error_node",
+        "importPath": "nodes.run_query",
+        "description": "nodes.run_query",
+        "isExtraImport": true,
+        "detail": "nodes.run_query",
+        "documentation": {}
+    },
+    {
+        "label": "respond_to_user",
+        "importPath": "nodes.respond_to_user",
+        "description": "nodes.respond_to_user",
+        "isExtraImport": true,
+        "detail": "nodes.respond_to_user",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_query_node",
+        "importPath": "nodes.analyze_query",
+        "description": "nodes.analyze_query",
+        "isExtraImport": true,
+        "detail": "nodes.analyze_query",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "VectorStore",
+        "importPath": "vector_db",
+        "description": "vector_db",
+        "isExtraImport": true,
+        "detail": "vector_db",
+        "documentation": {}
+    },
+    {
+        "label": "PersistentClient",
+        "importPath": "chromadb",
+        "description": "chromadb",
+        "isExtraImport": true,
+        "detail": "chromadb",
+        "documentation": {}
+    },
+    {
+        "label": "EmbeddingFunction",
+        "importPath": "chromadb",
+        "description": "chromadb",
+        "isExtraImport": true,
+        "detail": "chromadb",
+        "documentation": {}
+    },
+    {
+        "label": "Embeddings",
+        "importPath": "chromadb",
+        "description": "chromadb",
+        "isExtraImport": true,
+        "detail": "chromadb",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_query_node",
+        "kind": 2,
+        "importPath": "nodes.analyze_query",
+        "description": "nodes.analyze_query",
+        "peekOfCode": "def analyze_query_node(state: AgentState):\n    prompt_template = get_analyze_query_prompt(state)\n    response = llm.invoke(prompt_template.format(input=state.user_query))\n    response_text = response.content.strip()\n    query_match = re.search(r\"Query_Details:\\s*(.+?)(?=\\n[A-Za-z_]*Details:|$)\", response_text, re.DOTALL | re.IGNORECASE)\n    action_match = re.search(r\"Action_Details:\\s*(.+?)(?=\\n[A-Za-z_]*Details:|$)\", response_text, re.DOTALL | re.IGNORECASE)\n    query_details = query_match.group(1).strip() if query_match else \"Fetch relevant data\"\n    action_details = action_match.group(1).strip() if action_match else \"Got it\"\n    return AgentState(\n        user_query=state.user_query,",
+        "detail": "nodes.analyze_query",
+        "documentation": {}
+    },
+    {
+        "label": "generate_sql_node",
+        "kind": 2,
+        "importPath": "nodes.generate_sql_query",
+        "description": "nodes.generate_sql_query",
+        "peekOfCode": "def generate_sql_node(state: AgentState):\n    # chroma_results = vectorstores.max_marginal_relevance_search(AgentState.user_query,  k=10, fetch_k=20)  # Returns (Document, distance)\n    # # Extract only user query texts from ChromaDB results\n    # retrieved_queries = [doc.page_content for doc in chroma_results]\n    # Dictionary for quick lookup of SQL queries\n    # query_mapping = {item[\"user_input\"]: item[\"query\"] for item in sample_queries}\n    # Find matching SQL queries\n    # matched_sql_queries = [\n    #     f\" User Query: {user_query}\\n   → SQL: {query_mapping.get(user_query, 'No SQL Query Found')}\"\n    #     for user_query in retrieved_queries",
+        "detail": "nodes.generate_sql_query",
+        "documentation": {}
+    },
+    {
+        "label": "respond_to_user",
+        "kind": 2,
+        "importPath": "nodes.respond_to_user",
+        "description": "nodes.respond_to_user",
+        "peekOfCode": "def respond_to_user(state: AgentState):\n    if state.error:\n        return AgentState(\n            user_query=state.user_query,\n            final_response=[AIMessage(content=f\"Could not execute query. Error: {state.error}\")]\n        )\n    if not state.query_result:\n        return AgentState(\n            user_query=state.user_query,\n            final_response=[AIMessage(content=\"No results found in the database.\")]",
+        "detail": "nodes.respond_to_user",
+        "documentation": {}
+    },
+    {
+        "label": "run_query_and_handle_error_node",
+        "kind": 2,
+        "importPath": "nodes.run_query",
+        "description": "nodes.run_query",
+        "peekOfCode": "def run_query_and_handle_error_node(state: AgentState):\n    result = run_sql_query(state.sql_query)\n    if isinstance(result, str) and \"Error\" in result:\n        return AgentState(\n            user_query=state.user_query,\n            db_query=state.db_query,\n            general_query=state.general_query,\n            sql_query=state.sql_query,\n            error=result,\n            loop_count=state.loop_count + 1",
+        "detail": "nodes.run_query",
+        "documentation": {}
+    },
+    {
+        "label": "AgentState",
+        "kind": 6,
+        "importPath": "states.agent_state",
+        "description": "states.agent_state",
+        "peekOfCode": "class AgentState(BaseModel):\n    user_query: str\n    general_query: Optional[str] = None\n    db_query: Optional[str] = None\n    sql_query: Optional[str] = None\n    query_result: Optional[List[dict]] = None\n    error: Optional[str] = None\n    final_response: Optional[AIMessage | HumanMessage] = None\n    loop_count: Optional[int] = 0",
+        "detail": "states.agent_state",
+        "documentation": {}
+    },
+    {
+        "label": "apply_general_processing_with_llm",
+        "kind": 2,
+        "importPath": "utils.format_final_response",
+        "description": "utils.format_final_response",
+        "peekOfCode": "def apply_general_processing_with_llm(state):\n    \"\"\"\n    Uses LLM to process query results based on the general_query instructions.\n    This allows LLM to handle summarization, ranking, comparisons, etc.\n    \"\"\"\n    # Convert query result into structured JSON format for LLM\n    formatted_data = json.dumps(state.query_result, indent=2)\n    df = pd.DataFrame(json.loads(formatted_data))\n    parsed_data=df.to_csv()\n    action_query=state.general_query",
+        "detail": "utils.format_final_response",
+        "documentation": {}
+    },
+    {
+        "label": "generate_report_url",
+        "kind": 2,
+        "importPath": "utils.generate_report_url",
+        "description": "utils.generate_report_url",
+        "peekOfCode": "def generate_report_url(state, llm):\n    \"\"\"\n    Uses the LLM to analyze the user query and generate a report URL.\n    \"\"\"\n    # Define prompt template\n    prompt_template = get_report_url_prompt()\n    # Format the prompt with user input\n    prompt = prompt_template.format(input=state.user_query, query=state.sql_query)\n    response = llm.invoke(prompt)\n    # Return the response content",
+        "detail": "utils.generate_report_url",
+        "documentation": {}
+    },
+    {
+        "label": "run_sql_query",
+        "kind": 2,
+        "importPath": "utils.run_sql_query",
+        "description": "utils.run_sql_query",
+        "peekOfCode": "def run_sql_query(query):\n    \"\"\"Execute SQL query and return results.\"\"\"\n    try:\n        result = db.run(query, include_columns=True)\n        if result == '':\n         return 'Error executing query: No such data exists in the database'\n        data = ast.literal_eval(result)\n        return data\n    except Exception as e:\n        return f\"Error executing query: {e}\"",
+        "detail": "utils.run_sql_query",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_table_names",
+        "kind": 2,
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "peekOfCode": "def fetch_table_names() -> List[str]:\n    \"\"\"Fetch all usable table names from the database.\"\"\"\n    return db.get_usable_table_names()\ndef fetch_table_schema(table: str) -> List[Dict[str, Any]]:\n    \"\"\"Fetch the schema information for a given table.\"\"\"\n    return db.run(f\"PRAGMA table_info({table});\")\ndef fetch_table_relations(table: str) -> List[Dict[str, Any]]:\n    \"\"\"Fetch the foreign key relationships for a given table.\"\"\"\n    return db.run(f\"PRAGMA foreign_key_list({table});\")\ndef safe_literal_eval(data: str) -> Any:",
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_table_schema",
+        "kind": 2,
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "peekOfCode": "def fetch_table_schema(table: str) -> List[Dict[str, Any]]:\n    \"\"\"Fetch the schema information for a given table.\"\"\"\n    return db.run(f\"PRAGMA table_info({table});\")\ndef fetch_table_relations(table: str) -> List[Dict[str, Any]]:\n    \"\"\"Fetch the foreign key relationships for a given table.\"\"\"\n    return db.run(f\"PRAGMA foreign_key_list({table});\")\ndef safe_literal_eval(data: str) -> Any:\n    \"\"\"Safely evaluate a string representation of a Python object.\"\"\"\n    try:\n        return ast.literal_eval(data)",
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_table_relations",
+        "kind": 2,
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "peekOfCode": "def fetch_table_relations(table: str) -> List[Dict[str, Any]]:\n    \"\"\"Fetch the foreign key relationships for a given table.\"\"\"\n    return db.run(f\"PRAGMA foreign_key_list({table});\")\ndef safe_literal_eval(data: str) -> Any:\n    \"\"\"Safely evaluate a string representation of a Python object.\"\"\"\n    try:\n        return ast.literal_eval(data)\n    except (ValueError, SyntaxError) as e:\n        print(f\"⚠️ Warning: Could not evaluate string as literal. Error: {e}\")\n        return []",
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "safe_literal_eval",
+        "kind": 2,
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "peekOfCode": "def safe_literal_eval(data: str) -> Any:\n    \"\"\"Safely evaluate a string representation of a Python object.\"\"\"\n    try:\n        return ast.literal_eval(data)\n    except (ValueError, SyntaxError) as e:\n        print(f\"⚠️ Warning: Could not evaluate string as literal. Error: {e}\")\n        return []\ndef format_schema_info(schema_info) -> str:\n    \"\"\"Format the schema information into a human-readable string.\"\"\"\n    formatted_schema = []",
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "format_schema_info",
+        "kind": 2,
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "peekOfCode": "def format_schema_info(schema_info) -> str:\n    \"\"\"Format the schema information into a human-readable string.\"\"\"\n    formatted_schema = []\n    for table, columns in schema_info.items():\n        formatted_columns = [\n            f\"`{col[1]}` ({col[2]})\"\n            + (\" [Primary Key]\" if col[5] else \"\")\n            + (\" [NOT NULL]\" if col[3] == 1 else \"\")\n            + (f\" [Default: {col[4]}]\" if col[4] is not None else \"\")\n            for col in columns",
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "format_relations_info",
+        "kind": 2,
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "peekOfCode": "def format_relations_info(relations_info: Dict[str, List[Any]]) -> str:\n    \"\"\"Format the foreign key relationships into a human-readable string.\"\"\"\n    formatted_relations = []\n    for table, relations in relations_info.items():\n        if relations:\n            formatted_relations.append(\n                f\"In table `{table}`, \" + \", \".join([\n                    f\"column `{col[3]}` refers to `{col[2]}.{col[4]}` \"\n                    f\"[ON DELETE: {col[6]}, ON UPDATE: {col[5]}]\"\n                    for col in relations",
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "get_db_schema",
+        "kind": 2,
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "peekOfCode": "def get_db_schema() -> str:\n    \"\"\"Retrieve and format the entire database schema and relationships.\"\"\"\n    # Fetch table names\n    table_names = fetch_table_names()\n    # Fetch schema info and foreign key relations\n    schema_info = {table: fetch_table_schema(table) for table in table_names}\n    relations_info = {table: fetch_table_relations(table) for table in table_names}\n    # Safely process the schema and relations (convert strings to lists)\n    for table in schema_info:\n        if isinstance(schema_info[table], str):",
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "prepare_schema_data",
+        "kind": 2,
+        "importPath": "utils.schema_utils",
+        "description": "utils.schema_utils",
+        "peekOfCode": "def prepare_schema_data() -> dict:\n    # 1. Get table names\n    table_names = db.get_usable_table_names()\n    # 2. Fetch raw schema and relationship info\n    schema_info = {table: db.run(f\"PRAGMA table_info({table});\") for table in table_names}\n    relations_info = {table: db.run(f\"PRAGMA foreign_key_list({table});\") for table in table_names}\n    # 3. Convert string results to Python objects if needed\n    for table in schema_info:\n        if isinstance(schema_info[table], str):\n            schema_info[table] = ast.literal_eval(schema_info[table])",
+        "detail": "utils.schema_utils",
+        "documentation": {}
+    },
+    {
+        "label": "check_success",
+        "kind": 2,
+        "importPath": "chatbot",
+        "description": "chatbot",
+        "peekOfCode": "def check_success(state: AgentState) -> str:\n    \"\"\"Validates the SQL query using sql_db_query_checker before execution.\"\"\"\n    if not state.query_result:\n        print(f\"Error Encountered: {state.error}\")\n        if state.loop_count >= 5:\n            return \"respond\"  # Stop execution once limit is reached\n        return \"analyze_query\"\n    else:  \n        return \"respond\"\n# Build Graph",
+        "detail": "chatbot",
+        "documentation": {}
+    },
+    {
+        "label": "graph",
+        "kind": 5,
+        "importPath": "chatbot",
+        "description": "chatbot",
+        "peekOfCode": "graph = StateGraph(AgentState)\ngraph.add_node(\"analyze_query\", analyze_query_node)\ngraph.add_node(\"generate_sql\", generate_sql_node)\ngraph.add_node(\"run_query_and_handle_error\", run_query_and_handle_error_node)\ngraph.add_node(\"respond\", respond_to_user)\ngraph.add_edge(START, \"analyze_query\")\ngraph.add_edge(\"analyze_query\",\"generate_sql\")\ngraph.add_edge(\"generate_sql\", \"run_query_and_handle_error\")\ngraph.add_conditional_edges(\n    \"run_query_and_handle_error\",",
+        "detail": "chatbot",
+        "documentation": {}
+    },
+    {
+        "label": "custom_sql_agent",
+        "kind": 5,
+        "importPath": "chatbot",
+        "description": "chatbot",
+        "peekOfCode": "custom_sql_agent = graph.compile()",
+        "detail": "chatbot",
+        "documentation": {}
+    },
+    {
+        "label": "llm",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "llm = ChatOllama(model=\"gemma3:12b\")\ndb = SQLDatabase.from_uri(\"sqlite:///my_database.db\")",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "db = SQLDatabase.from_uri(\"sqlite:///my_database.db\")",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "conn",
+        "kind": 5,
+        "importPath": "init_db",
+        "description": "init_db",
+        "peekOfCode": "conn = sqlite3.connect(\"my_database.db\")\ncursor = conn.cursor()\n# Load the SQL schema and data from a .sql file\nwith open(\"d.sql\", \"r\") as sql_file:\n    sql_script = sql_file.read()\ncursor.executescript(sql_script)\n# Get table names\ntables = cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table';\").fetchall()\ntables = [table[0] for table in tables]\n# Get table schema (including foreign keys)",
+        "detail": "init_db",
+        "documentation": {}
+    },
+    {
+        "label": "cursor",
+        "kind": 5,
+        "importPath": "init_db",
+        "description": "init_db",
+        "peekOfCode": "cursor = conn.cursor()\n# Load the SQL schema and data from a .sql file\nwith open(\"d.sql\", \"r\") as sql_file:\n    sql_script = sql_file.read()\ncursor.executescript(sql_script)\n# Get table names\ntables = cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table';\").fetchall()\ntables = [table[0] for table in tables]\n# Get table schema (including foreign keys)\nschema = {}",
+        "detail": "init_db",
+        "documentation": {}
+    },
+    {
+        "label": "tables",
+        "kind": 5,
+        "importPath": "init_db",
+        "description": "init_db",
+        "peekOfCode": "tables = cursor.execute(\"SELECT name FROM sqlite_master WHERE type='table';\").fetchall()\ntables = [table[0] for table in tables]\n# Get table schema (including foreign keys)\nschema = {}\nfor table in tables:\n    schema[table] = cursor.execute(f\"PRAGMA table_info({table});\").fetchall()\n# Get foreign keys\nforeign_keys = {}\nfor table in tables:\n    foreign_keys[table] = cursor.execute(f\"PRAGMA foreign_key_list({table});\").fetchall()",
+        "detail": "init_db",
+        "documentation": {}
+    },
+    {
+        "label": "tables",
+        "kind": 5,
+        "importPath": "init_db",
+        "description": "init_db",
+        "peekOfCode": "tables = [table[0] for table in tables]\n# Get table schema (including foreign keys)\nschema = {}\nfor table in tables:\n    schema[table] = cursor.execute(f\"PRAGMA table_info({table});\").fetchall()\n# Get foreign keys\nforeign_keys = {}\nfor table in tables:\n    foreign_keys[table] = cursor.execute(f\"PRAGMA foreign_key_list({table});\").fetchall()\ntable_name = \"hierarchy\"",
+        "detail": "init_db",
+        "documentation": {}
+    },
+    {
+        "label": "schema",
+        "kind": 5,
+        "importPath": "init_db",
+        "description": "init_db",
+        "peekOfCode": "schema = {}\nfor table in tables:\n    schema[table] = cursor.execute(f\"PRAGMA table_info({table});\").fetchall()\n# Get foreign keys\nforeign_keys = {}\nfor table in tables:\n    foreign_keys[table] = cursor.execute(f\"PRAGMA foreign_key_list({table});\").fetchall()\ntable_name = \"hierarchy\"\ncursor.execute(f\"SELECT * FROM {table_name}\")\nrows = cursor.fetchall()",
+        "detail": "init_db",
+        "documentation": {}
+    },
+    {
+        "label": "foreign_keys",
+        "kind": 5,
+        "importPath": "init_db",
+        "description": "init_db",
+        "peekOfCode": "foreign_keys = {}\nfor table in tables:\n    foreign_keys[table] = cursor.execute(f\"PRAGMA foreign_key_list({table});\").fetchall()\ntable_name = \"hierarchy\"\ncursor.execute(f\"SELECT * FROM {table_name}\")\nrows = cursor.fetchall()\nprint(len(rows))\nconn.commit()\nconn.close()\nprint(\"Database initialized from SQL file%\")",
+        "detail": "init_db",
+        "documentation": {}
+    },
+    {
+        "label": "table_name",
+        "kind": 5,
+        "importPath": "init_db",
+        "description": "init_db",
+        "peekOfCode": "table_name = \"hierarchy\"\ncursor.execute(f\"SELECT * FROM {table_name}\")\nrows = cursor.fetchall()\nprint(len(rows))\nconn.commit()\nconn.close()\nprint(\"Database initialized from SQL file%\")",
+        "detail": "init_db",
+        "documentation": {}
+    },
+    {
+        "label": "rows",
+        "kind": 5,
+        "importPath": "init_db",
+        "description": "init_db",
+        "peekOfCode": "rows = cursor.fetchall()\nprint(len(rows))\nconn.commit()\nconn.close()\nprint(\"Database initialized from SQL file%\")",
+        "detail": "init_db",
+        "documentation": {}
+    },
+    {
+        "label": "get_analyze_query_prompt",
+        "kind": 2,
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "peekOfCode": "def get_analyze_query_prompt(state):\n     # Include error context if query execution previously failed\n    error_context = f\"⚠ **Previous Query Execution Failed:** {state.error}\\n\\n\" if state.error else \"\"\n    system_message = (\n        \"**User Query Breakdown Assistant**\\n\\n\"\n        \"You are an assistant that extracts key components from user queries.\\n\\n\"\n        \"**Query_Details (What Data to Fetch)**\"\n        \"- Identify **what information** the user wants from the database.\"\n        \"- Use the **table schema and relationships** provided below to **map user intent to the correct tables, columns, and constraints**.\"\n        \"- SQL functions like `SUM`, `COUNT`, `AVG`, ETC should be included in `Query_Details`,\"",
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "get_sql_generation_prompt",
+        "kind": 2,
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "peekOfCode": "def get_sql_generation_prompt() -> str:\n    \"\"\"\n    Generate an SQL query prompt based on the current state and database schema.\n    Parameters:\n    - state (dict): Contains user input details (e.g., tables, columns, conditions, etc.).\n    Returns:\n    - str: SQL query prompt.\n    \"\"\"\n    prompt =  ChatPromptTemplate.from_messages([\n        (\"system\", \"\"\"",
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "get_report_url_prompt",
+        "kind": 2,
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "peekOfCode": "def get_report_url_prompt() -> str:\n    prompt_template = ChatPromptTemplate.from_messages([\n        (\"system\",\"\"\"\n            ### *Prompt for LLM to Generate Context-Aware URL Based on User Query, SQL Query.*\n            Generate the appropriate URL based on the user query and SQL query using the rules and filters provided below.\n            ---\n            ### *Rules for Choosing the Correct View:*  \n            1. *If the user explicitly asks for hierarchy data*, generate a *Hierarchy View URL*, even if annotation-related filters are in the SQL query.  \n            2. *If the user explicitly asks for annotation data*, generate an *Annotation View URL*, even if `l1` is present.  \n            3. *If the user’s query is ambiguous*, analyze the SQL query:  ",
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "generate_common_query",
+        "kind": 2,
+        "importPath": "tools",
+        "description": "tools",
+        "peekOfCode": "def generate_common_query(user_query):\n    \"\"\"\n    Looks up information in a knowledge base to help with answering customer questions and getting information on business processes.\n    Args:\n        query (str): Question to ask the knowledge base\n    Return:\n        List[Dict[str, str]]: Potentially relevant question and answer pairs from the knowledge base\n    \"\"\"\n    return vector_store.query_faqs(query=user_query)",
+        "detail": "tools",
+        "documentation": {}
+    },
+    {
+        "label": "vector_store",
+        "kind": 5,
+        "importPath": "tools",
+        "description": "tools",
+        "peekOfCode": "vector_store = VectorStore()\ndef generate_common_query(user_query):\n    \"\"\"\n    Looks up information in a knowledge base to help with answering customer questions and getting information on business processes.\n    Args:\n        query (str): Question to ask the knowledge base\n    Return:\n        List[Dict[str, str]]: Potentially relevant question and answer pairs from the knowledge base\n    \"\"\"\n    return vector_store.query_faqs(query=user_query)",
+        "detail": "tools",
+        "documentation": {}
+    },
+    {
+        "label": "Product",
+        "kind": 6,
+        "importPath": "vector_db",
+        "description": "vector_db",
+        "peekOfCode": "class Product:\n    def __init__(self, name: str, id: str, description: str, type: str, price: float, quantity: int):\n        self.name = name\n        self.id = id\n        self.description = description\n        self.type = type\n        self.price = price\n        self.quantity = quantity\nclass QuestionAnswerPairs:\n    def __init__(self, question: str, answer: str):",
+        "detail": "vector_db",
+        "documentation": {}
+    },
+    {
+        "label": "QuestionAnswerPairs",
+        "kind": 6,
+        "importPath": "vector_db",
+        "description": "vector_db",
+        "peekOfCode": "class QuestionAnswerPairs:\n    def __init__(self, question: str, answer: str):\n        self.question = question\n        self.answer = answer\nclass CustomEmbeddingClass(EmbeddingFunction):\n    def __init__(self):\n        self.embedding_model = OllamaEmbeddings(model=\"nomic-embed-text\")\n    def __call__(self, input: List[str]) -> List[List[float]]:\n        return [self.embedding_model.embed_query(text) for text in input]\nclass VectorStore:",
+        "detail": "vector_db",
+        "documentation": {}
+    },
+    {
+        "label": "CustomEmbeddingClass",
+        "kind": 6,
+        "importPath": "vector_db",
+        "description": "vector_db",
+        "peekOfCode": "class CustomEmbeddingClass(EmbeddingFunction):\n    def __init__(self):\n        self.embedding_model = OllamaEmbeddings(model=\"nomic-embed-text\")\n    def __call__(self, input: List[str]) -> List[List[float]]:\n        return [self.embedding_model.embed_query(text) for text in input]\nclass VectorStore:\n    def __init__(self):\n        db = PersistentClient(path=DB_PATH)\n        custom_embedding_function = CustomEmbeddingClass()\n        self.faq_collection = db.get_or_create_collection(name='FAQ', embedding_function=custom_embedding_function)",
+        "detail": "vector_db",
+        "documentation": {}
+    },
+    {
+        "label": "VectorStore",
+        "kind": 6,
+        "importPath": "vector_db",
+        "description": "vector_db",
+        "peekOfCode": "class VectorStore:\n    def __init__(self):\n        db = PersistentClient(path=DB_PATH)\n        custom_embedding_function = CustomEmbeddingClass()\n        self.faq_collection = db.get_or_create_collection(name='FAQ', embedding_function=custom_embedding_function)\n        # self.inventory_collection = db.get_or_create_collection(name='Inventory', embedding_function=custom_embedding_function)\n        if self.faq_collection.count() == 0:\n            self._load_faq_collection(FAQ_FILE_PATH)\n        # if self.inventory_collection.count() == 0:\n        #     self._load_inventory_collection(INVENTORY_FILE_PATH)",
+        "detail": "vector_db",
+        "documentation": {}
+    },
+    {
+        "label": "DB_PATH",
+        "kind": 5,
+        "importPath": "vector_db",
+        "description": "vector_db",
+        "peekOfCode": "DB_PATH = './.chroma_db'\nFAQ_FILE_PATH= './FAQ.json'\n# INVENTORY_FILE_PATH = './inventory.json'\nclass Product:\n    def __init__(self, name: str, id: str, description: str, type: str, price: float, quantity: int):\n        self.name = name\n        self.id = id\n        self.description = description\n        self.type = type\n        self.price = price",
+        "detail": "vector_db",
+        "documentation": {}
+    }
+]
