@@ -5,7 +5,6 @@ torch
 pandas
 unstructured
 tiktoken
-pinecone-client
 pypdf
 langgraph
 numpy
@@ -21,3 +20,5 @@ langchain-chroma
 docx2txt
 bs4 
 ipykernel
+langchain_neo4j
+pinecone

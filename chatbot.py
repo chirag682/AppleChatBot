@@ -25,6 +25,7 @@ from nodes.generate_sql_query import generate_sql_node
 from nodes.run_query import run_query_and_handle_error_node
 from nodes.respond_to_user import respond_to_user
 from nodes.analyze_query import analyze_query_node
+from nodes.analyze_schema import analyze_schema_node
 
 #  Use `add_conditional_edges()` Instead of `condition
 def check_success(state: AgentState) -> str:
@@ -41,6 +42,7 @@ def check_success(state: AgentState) -> str:
 # Build Graph
 graph = StateGraph(AgentState)
 graph.add_node("analyze_query", analyze_query_node)
+graph.add_node("analyze_schema", analyze_schema_node)
 graph.add_node("generate_sql", generate_sql_node)
 graph.add_node("run_query_and_handle_error", run_query_and_handle_error_node)
 graph.add_node("respond", respond_to_user)
@@ -48,7 +50,8 @@ graph.add_node("respond", respond_to_user)
 
 
 graph.add_edge(START, "analyze_query")
-graph.add_edge("analyze_query","generate_sql")
+graph.add_edge("analyze_query","analyze_schema")
+graph.add_edge("analyze_schema","generate_sql")
 graph.add_edge("generate_sql", "run_query_and_handle_error")
 graph.add_conditional_edges(
     "run_query_and_handle_error",

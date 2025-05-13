@@ -1,76 +1,109 @@
 from langchain_core.prompts import ChatPromptTemplate
+from langchain.prompts import PromptTemplate
 from utils.schema_utils import fetch_table_names, fetch_table_schema, fetch_table_relations, safe_literal_eval
+import json
+
+def escape_curly_braces(text):
+    return text.replace("{", "{{").replace("}", "}}")
 
 def get_analyze_query_prompt(state):
      # Include error context if query execution previously failed
     error_context = f"⚠ **Previous Query Execution Failed:** {state.error}\n\n" if state.error else ""
 
+    schema_dict = {
+    "tables": [
+        {
+            "name": "annotations",
+            "aliases": ["notes", "comments"],
+            "desc": "User annotations linked to hierarchy",
+            "fields": [
+                "id", "username", "email", "timestamp", "content",
+                "hierarchy_id", "annotation_status", "annotation_type"
+            ],
+            "references": ["hierarchy"]
+        },
+        {
+            "name": "hierarchy",
+            "aliases": ["organisation", "categories", "classification"],
+            "desc": "Org category structure (l1-l5, metrics)",
+            "fields": [
+                "id", "l1", "l2", "l3", "l4", "l5", "is_leaf", "is_forecast",
+                "group_id", "description", "last_month_spending",
+                "user_count", "account_count_3pc", "account_count_first_party"
+            ],
+            "receives": ["annotations", "monthly_forecast", "user_role", "account"]
+        },
+        {
+            "name": "monthly_forecast",
+            "aliases": ["forecast_data", "monthly_budget"],
+            "desc": "Forecast/spend data by month",
+            "fields": [
+                "fiscal_month", "fiscal_year", "forecast", "previous",
+                "cloud_provider", "fiscal_quarter", "plug", "spend",
+                "financial_spend", "comment", "cost_center"
+            ],
+            "references": ["hierarchy"]
+        },
+        {
+            "name": "user_role",
+            "desc": "User roles and access per hierarchy",
+            "fields": ["id", "email", "role", "hierarchy_id", "view", "service"],
+            "references": ["hierarchy"]
+        },
+        {
+            "name": "account",
+            "desc": "Cloud accounts metadata",
+            "fields": [
+                "account_id", "hierarchy_id", "account_name", "account_owner",
+                "cloud_provider", "comment", "loaded_at", "decommissioned_at",
+                "owner_name", "owner_dsid", "last_month_spend"
+            ],
+            "references": ["hierarchy"]
+        }
+    ]
+}
+    
+    escaped_schema_json = escape_curly_braces(json.dumps(schema_dict, indent=2))
+
+    
     system_message = (
-        "**User Query Breakdown Assistant**\n\n"
-        "You are an assistant that extracts key components from user queries.\n\n"
-        "**Query_Details (What Data to Fetch)**"
-        "- Identify **what information** the user wants from the database."
-        "- Use the **table schema and relationships** provided below to **map user intent to the correct tables, columns, and constraints**."
-        "- SQL functions like `SUM`, `COUNT`, `AVG`, ETC should be included in `Query_Details`,"
-        "- **DO NOT generate an SQL query.** Instead, describe in **plain text** what data needs to be retrieved."
+        "**User Query Breakdown Assistant**\n"
+        "Your task is to analyze the user’s question and break it down into three components:\n"
+        "1. **Query_Details** – What specific data is requested (for SQL).\n"
+        "2. **Action_Details** – What is the high-level user intent (human-readable summary).\n"
+        "3. **Cypher_Details** – Which tables (nodes), fields (properties), and relationships are needed for graph-based schema lookup.\n\n"
 
-        "**Action_Details (How to Process the Data)**"
-        "- Identify **any additional processing** required beyond just fetching data."
-        "- SQL functions like `SUM`, `COUNT`, `AVG`, ETC should be **not be included in `Action_Details`**, **but** if the user asks for a **summary, explanation, insights, or text-based processing**, include that in `Action_Details`."  
-        "- If no extra processing is needed, return No additional processing required."
+        "**DO NOT write SQL or Cypher code.** Just describe the needed components.\n\n"
 
-        "### **Response Format:**"
-        "```plaintext"
-        "Query_Details: (Concise description of required data)\n"
-        "Action_Details: (Any summary, explanation, or processing needed, or **return the query as-is** ')\n"
-        "**Strictly follow this format.**"
+        "**Query_Details (What Data to Fetch)**\n"
+        "You are an assistant that extracts the key elements from a user’s query to help generate accurate SQL.\n"
+        "- Identify **what specific data** is needed from the database.\n"
+        "- Use the **table schema, field names, and relationships** below to align the user request with relevant tables and fields.\n"
+        "- If the user intends to use SQL functions (e.g., `SUM`, `COUNT`, `AVG`), include that in `Query_Details`.\n"
+        "- **DO NOT write SQL.** Just describe in plain terms what needs to be retrieved.\n\n"
+        "-  Consider mentioning table name wherever possible, **add the suffix** ` table` (e.g., `annotations table`) for better understanding."
 
-        "### **If required you can use database for Data and relations reference:**\n"
-        "### Database Summary for Query Understanding"
-        "The database consists of two main tables:"  
-
-        "#### Annotations Table (`annotations`)"
-        "- Stores **user-generated annotations** linked to a hierarchy." 
-        "- Key fields:"  
-        "- `id` → Unique identifier for each annotation."  
-        "- `username`, `email` → User details who made the annotation." 
-        "- `timestamp` → Date and time when the annotation was made."
-        "- `content` → Actual annotation text."  
-        "- `hierarchy_id` → **Foreign key** linking the annotation to the `hierarchy` table."  
-        "- `annotation_status` → Status of the annotation (`COMPLETED`, `IN_PROGRESS`,'PENDING'.)." 
-        "- `annotation_type` → Type of annotation (`monthly`, `yearly`, etc.)." 
-        "---\n\n"
-        "#### Hierarchy Table (`hierarchy`)"
-        "- Represents **structured levels** of a hierarchy system."
-        "- Key fields:"
-        "- `id` → Unique identifier for each hierarchy level."
-        "- `l1`, `l2`, `l3`, `l4`, `l5` → Different hierarchical levels." 
-        "- `is_leaf` → Indicates if it’s the lowest level in the hierarchy" 
-        "- `is_forecast` → Specifies if the data is forecasted or actual."
-        "- `group_id`, `description` → Additional metadata about the hierarchy." 
-        "- `last_month_spending` → Stores financial spending data for analysis."  
-        "- `user_count`, `account_count_3pc`, `account_count_first_party` → Various metrics related to users and accounts."  
-        "---\n\n"
+        "**Action_Details (How to Process the Data)**\n"
+        "- Identify any **post-processing** needed, like summarization, insight extraction, or reformatting.\n"
+        "- Do **NOT** repeat SQL functions here. If the user asks for narrative insights or summaries, capture that here.\n"
+        "- If no processing is needed, respond with: `No additional processing required.`\n\n"
         
-        "**Hierarchy table Structure (`l1` → `l5`):**"
-        "The database follows a **multi-level hierarchy**, where each level represents a progressively **more specific** classification."  
-        "- `l1`: **Top-level category** (Broadest classification, e.g., Finance)"  
-        "- `l2`: **Sub-category of `l1`**" 
-        "- `l3`: **Sub-category of `l2`**"
-        "- `l4`: **Sub-category of `l3`**"
-        "- `l5`: **Deepest level** (Most specific classification)"
-        "**Key Insight:**" 
-        "-- If the user mentions an organization/org (e.g., Acare org), map it to l1 in the query."
-        "- When a user asks for data related to a hierarchy (e.g., Finance), they are **most likely referring to `l1`** unless stated otherwise."  
-        "- If needed, check `l2` → `l5` for a more **granular breakdown** of the requested hierarchy."
-        "- If a user asks for an annotation summary, this refers to fetching the summary of content from the annotation table. The user may also request additional details about the annotations, which should be specified in their query (such as specific hierarchy, time range, or other relevant filters). Based on the user's request, fetch the necessary columns accordingly, including the explanation of content, user details (such as the user who created or updated the annotation), and the timestamp when the annotation was made or updated."
-        "### Table Relationship"
-        "- The **`annotations` table is linked to the `hierarchy` table** through the `hierarchy_id` field."  
-        "- This allows retrieving annotations related to **specific hierarchy levels** (e.g., Finance in `l1`)."  
-        "- **Use this relationship when filtering or joining data between tables.**"
-        "---"
-        "**This summary provides a high-level view of table structures, key fields, and their relationships to assist in query understanding.** "
-        "- **Use the schema to identify correct tables, columns, and constraints as per the user query.**"
+        "- For `Cypher_Details`, identify:\n"
+        " - Primary table(s) to begin with.\n"
+        " - Key fields mentioned.\n"
+        " - Any referenced or referencing tables connected via relationships.\n\n"
+       
+
+        "### **Response Format:**\n"
+        "```plaintext\n"
+        "Query_Details: (clear description of data required for SQL)\n"
+        "Action_Details: (high-level, human-readable summary of user intent)\n"
+        "Cypher_Details: (summary of tables, fields, and relationships for graph-based schema reasoning)\n"
+        "```\n"
+        "**Strictly follow this format.**\n\n"
+
+        "### **Database Schema for Reference**\n"
+        f"{escaped_schema_json}"
     )
 
     # Construct LLM prompt
@@ -290,3 +323,96 @@ def get_report_url_prompt() -> str:
     ])
     
     return prompt_template
+
+
+def get_cypher_generation_prompt() -> str:
+    return PromptTemplate(
+        template = """
+            You are an expert in analyzing database schemas modeled in Neo4j. Write queries strictly according to **Neo4j Cypher syntax**.
+
+            In this Neo4j graph:
+            - Each **node** is a `Table` representing a **database table**.
+            - Each `Table` node contains properties that define the **fields (columns)** of that table.
+            - Each `Field` node is connected via a `[:CONTAINS]` relationship to its corresponding `Table`.
+            - Relationships between `Table` nodes (e.g., `REFERENCES`, `RECEIVES`) represent **schema-level links**, such as foreign key dependencies.
+
+            ---
+
+            ### Your task:
+            1. Understand the user’s question and identify the **main table(s)** referenced.
+            2. Construct a **single Cypher query** that:
+                - Matches the main table(s) using `toLower(...name) =~ "(?i).*..."` (case-insensitive, pattern-based matching) instead of `CONTAINS` for flexible and similar searches.
+                - Uses `OPTIONAL MATCH` to expand to related tables via schema relationships.
+                - Retrieves all matched tables’ fields with `MATCH (table)-[:CONTAINS]->(field:Field)`.
+            3. Aggregate all data **before** the `RETURN` clause.
+            4. For each table (primary or related), collect its fields in a separate step:
+                - Use `MATCH (t)-[:CONTAINS]->(f:Field)` and `COLLECT(f)` for each distinct table node (e.g., `t`, `related`).
+                - Assign different aliases for each table and its fields (e.g., `t`, `related`, `t_fields`, `related_fields`) to avoid overwriting data.
+            5. At the end, return a list of objects by **collecting all structured results** before returning them in a single list.
+
+            ### DOs:
+            - Use separate `MATCH` or `OPTIONAL MATCH` clauses for each node/relationship.
+            - Always **`COLLECT` field nodes before using them in list comprehensions.**
+            - Use `WITH` clauses to manage intermediate variables and pass data forward.
+            - Return only a **single `RETURN` block** at the end.
+            - If no related table exists, return only the primary table and its fields.
+            - In Cypher, map keys must not be enclosed in double quotes. Use unquoted keys (e.g., table_name: value, not "table_name": value) when constructing map objects in the RETURN clause.
+            - Ensure all data is collected before RETURN: Use WITH to manage variables and pass required nodes and properties forward.
+            - Use the same variable names in RETURN as in the WITH clauses to ensure consistency.
+            ---
+
+            ### DON’Ts:
+            - Do NOT embed MATCH patterns inside `RETURN` or list comprehensions.
+            - Do NOT use more than one `RETURN` clause.
+            - Do NOT return actual business data.
+            - Do NOT use SQL-like syntax (`SELECT`, `FROM`, etc.).
+            - Do NOT reference undefined variables in the `RETURN`.
+            - Don’t attempt to access variables that haven’t been passed through the current WITH clauses, as this causes errors
+            ---
+
+            ### Schema Relationships Summary:
+            {schema}
+
+            ---
+
+            ### User Question:
+            {question}
+
+            ---
+
+            ### Output:
+            Return only a **valid, executable Cypher query** that:
+            - Matches main and related tables,
+            - Collects their fields properly,
+            - Returns a clean JSON-like object with all matched and related tables. 
+
+            Return only the Cypher query, and nothing else.
+            """,
+        input_variables=["schema", "question"]
+    )
+def get_qa_prompt() -> str:
+    return PromptTemplate(
+        template="""
+        You are an assistant that summarizes database schema information retrieved from a Cypher query over a graph of tables and their relationships.
+
+        Your task is to:
+        - For each table, summarize its **fields (columns)** in plain English.
+        - Mention any **relationships** between the tables, if applicable.
+        - Write the summary in a way that helps a llm understand the structure for writing SQL queries.
+
+        Do **NOT** include actual business data or query results — only describe the schema (tables, fields, and their relationships).
+
+        ---
+        Question: {question}  
+        Cypher Query: {query}  
+        Query Results (schema context): {context}
+
+        ---
+        Schema Summary:
+        - Clearly list each table involved (by name).
+        - For each table, write: `"The '<table name>' table contains fields like: <field1>, <field2>, ..."`
+        - If any relationship exists (e.g., table A references table B), write: `"The '<table A>' table is linked to '<table B>' via a schema relationship."`
+        - Keep the explanation **short, structured, and suitable as input to an SQL generation assistant.**
+        """,
+        input_variables=["question", "query", "context"],
+    )

@@ -217,6 +217,30 @@
         "documentation": {}
     },
     {
+        "label": "get_analyze_query_prompt",
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "isExtraImport": true,
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "get_cypher_generation_prompt",
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "isExtraImport": true,
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "get_qa_prompt",
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "isExtraImport": true,
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
         "label": "get_sql_generation_prompt",
         "importPath": "prompt_templates",
         "description": "prompt_templates",
@@ -281,7 +305,31 @@
         "documentation": {}
     },
     {
+        "label": "AgentState",
+        "importPath": "states.agent_state",
+        "description": "states.agent_state",
+        "isExtraImport": true,
+        "detail": "states.agent_state",
+        "documentation": {}
+    },
+    {
         "label": "llm",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "llm",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "graph",
         "importPath": "config",
         "description": "config",
         "isExtraImport": true,
@@ -334,6 +382,22 @@
         "description": "config",
         "isExtraImport": true,
         "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "GraphCypherQAChain",
+        "importPath": "langchain_neo4j",
+        "description": "langchain_neo4j",
+        "isExtraImport": true,
+        "detail": "langchain_neo4j",
+        "documentation": {}
+    },
+    {
+        "label": "schema",
+        "importPath": "init_db",
+        "description": "init_db",
+        "isExtraImport": true,
+        "detail": "init_db",
         "documentation": {}
     },
     {
@@ -434,6 +498,14 @@
     },
     {
         "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -670,12 +742,36 @@
         "documentation": {}
     },
     {
+        "label": "analyze_schema_node",
+        "importPath": "nodes.analyze_schema",
+        "description": "nodes.analyze_schema",
+        "isExtraImport": true,
+        "detail": "nodes.analyze_schema",
+        "documentation": {}
+    },
+    {
+        "label": "Neo4jGraph",
+        "importPath": "langchain_community.graphs",
+        "description": "langchain_community.graphs",
+        "isExtraImport": true,
+        "detail": "langchain_community.graphs",
+        "documentation": {}
+    },
+    {
         "label": "sqlite3",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "sqlite3",
         "description": "sqlite3",
         "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "PromptTemplate",
+        "importPath": "langchain.prompts",
+        "description": "langchain.prompts",
+        "isExtraImport": true,
+        "detail": "langchain.prompts",
         "documentation": {}
     },
     {
@@ -715,8 +811,17 @@
         "kind": 2,
         "importPath": "nodes.analyze_query",
         "description": "nodes.analyze_query",
-        "peekOfCode": "def analyze_query_node(state: AgentState):\n    prompt_template = get_analyze_query_prompt(state)\n    response = llm.invoke(prompt_template.format(input=state.user_query))\n    response_text = response.content.strip()\n    query_match = re.search(r\"Query_Details:\\s*(.+?)(?=\\n[A-Za-z_]*Details:|$)\", response_text, re.DOTALL | re.IGNORECASE)\n    action_match = re.search(r\"Action_Details:\\s*(.+?)(?=\\n[A-Za-z_]*Details:|$)\", response_text, re.DOTALL | re.IGNORECASE)\n    query_details = query_match.group(1).strip() if query_match else \"Fetch relevant data\"\n    action_details = action_match.group(1).strip() if action_match else \"Got it\"\n    return AgentState(\n        user_query=state.user_query,",
+        "peekOfCode": "def analyze_query_node(state: AgentState):\n    prompt_template = get_analyze_query_prompt(state)\n    response = llm.invoke(prompt_template.format(input=state.user_query))\n    response_text = response.content.strip()\n    query_match = re.search(r\"Query_Details:\\s*(.+?)(?=\\n[A-Za-z_]*Details:|$)\", response_text, re.DOTALL | re.IGNORECASE)\n    action_match = re.search(r\"Action_Details:\\s*(.+?)(?=\\n[A-Za-z_]*Details:|$)\", response_text, re.DOTALL | re.IGNORECASE)\n    cypher_match = re.search(r\"Cypher_Details:\\s*(.+?)(?=\\n[A-Za-z_]*Details:|$)\", response_text, re.DOTALL | re.IGNORECASE)\n    query_details = query_match.group(1).strip() if query_match else \"Fetch relevant data\"\n    action_details = action_match.group(1).strip() if action_match else \"Got it\"\n    cypher_details = cypher_match.group(1).strip() if cypher_match else \"Fetch relevant data\"",
         "detail": "nodes.analyze_query",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_schema_node",
+        "kind": 2,
+        "importPath": "nodes.analyze_schema",
+        "description": "nodes.analyze_schema",
+        "peekOfCode": "def analyze_schema_node(state: AgentState):\n    cypher_prompt = get_cypher_generation_prompt()\n    qa_prompt = get_qa_prompt()\n    print(cypher_prompt)\n    graph_rag_chain = GraphCypherQAChain.from_llm(\n        cypher_llm=llm,\n        qa_llm=llm,\n        validate_cypher=True,\n        graph=graph,\n        verbose=True,",
+        "detail": "nodes.analyze_schema",
         "documentation": {}
     },
     {
@@ -751,7 +856,7 @@
         "kind": 6,
         "importPath": "states.agent_state",
         "description": "states.agent_state",
-        "peekOfCode": "class AgentState(BaseModel):\n    user_query: str\n    general_query: Optional[str] = None\n    db_query: Optional[str] = None\n    sql_query: Optional[str] = None\n    query_result: Optional[List[dict]] = None\n    error: Optional[str] = None\n    final_response: Optional[AIMessage | HumanMessage] = None\n    loop_count: Optional[int] = 0",
+        "peekOfCode": "class AgentState(BaseModel):\n    user_query: str\n    cypher_details: Optional[str] = None\n    general_query: Optional[str] = None\n    db_query: Optional[str] = None\n    schema_info: Optional[list[Any]] = None\n    sql_query: Optional[str] = None\n    query_result: Optional[List[dict]] = None\n    error: Optional[str] = None\n    final_response: Optional[AIMessage | HumanMessage] = None",
         "detail": "states.agent_state",
         "documentation": {}
     },
@@ -868,7 +973,7 @@
         "kind": 5,
         "importPath": "chatbot",
         "description": "chatbot",
-        "peekOfCode": "graph = StateGraph(AgentState)\ngraph.add_node(\"analyze_query\", analyze_query_node)\ngraph.add_node(\"generate_sql\", generate_sql_node)\ngraph.add_node(\"run_query_and_handle_error\", run_query_and_handle_error_node)\ngraph.add_node(\"respond\", respond_to_user)\ngraph.add_edge(START, \"analyze_query\")\ngraph.add_edge(\"analyze_query\",\"generate_sql\")\ngraph.add_edge(\"generate_sql\", \"run_query_and_handle_error\")\ngraph.add_conditional_edges(\n    \"run_query_and_handle_error\",",
+        "peekOfCode": "graph = StateGraph(AgentState)\ngraph.add_node(\"analyze_query\", analyze_query_node)\ngraph.add_node(\"analyze_schema\", analyze_schema_node)\ngraph.add_node(\"generate_sql\", generate_sql_node)\ngraph.add_node(\"run_query_and_handle_error\", run_query_and_handle_error_node)\ngraph.add_node(\"respond\", respond_to_user)\ngraph.add_edge(START, \"analyze_query\")\ngraph.add_edge(\"analyze_query\",\"analyze_schema\")\ngraph.add_edge(\"analyze_schema\",\"generate_sql\")\ngraph.add_edge(\"generate_sql\", \"run_query_and_handle_error\")",
         "detail": "chatbot",
         "documentation": {}
     },
@@ -886,7 +991,7 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "llm = ChatOllama(model=\"gemma3:12b\")\ndb = SQLDatabase.from_uri(\"sqlite:///my_database.db\")",
+        "peekOfCode": "llm = ChatOllama(model=\"gemma3:12b\")\ndb = SQLDatabase.from_uri(\"sqlite:///my_database.db\")\ngraph = Neo4jGraph(\n    url=\"neo4j+ssc://ac98a301.databases.neo4j.io\",     # or your remote URL\n    username=\"neo4j\",\n    password=\"IFlZqtxj3aTAOLwup5CZwftdAQFvzt8obpyfPSrZ3aM\"\n)",
         "detail": "config",
         "documentation": {}
     },
@@ -895,7 +1000,16 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "db = SQLDatabase.from_uri(\"sqlite:///my_database.db\")",
+        "peekOfCode": "db = SQLDatabase.from_uri(\"sqlite:///my_database.db\")\ngraph = Neo4jGraph(\n    url=\"neo4j+ssc://ac98a301.databases.neo4j.io\",     # or your remote URL\n    username=\"neo4j\",\n    password=\"IFlZqtxj3aTAOLwup5CZwftdAQFvzt8obpyfPSrZ3aM\"\n)",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "graph",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "graph = Neo4jGraph(\n    url=\"neo4j+ssc://ac98a301.databases.neo4j.io\",     # or your remote URL\n    username=\"neo4j\",\n    password=\"IFlZqtxj3aTAOLwup5CZwftdAQFvzt8obpyfPSrZ3aM\"\n)",
         "detail": "config",
         "documentation": {}
     },
@@ -972,11 +1086,20 @@
         "documentation": {}
     },
     {
+        "label": "escape_curly_braces",
+        "kind": 2,
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "peekOfCode": "def escape_curly_braces(text):\n    return text.replace(\"{\", \"{{\").replace(\"}\", \"}}\")\ndef get_analyze_query_prompt(state):\n     # Include error context if query execution previously failed\n    error_context = f\"⚠ **Previous Query Execution Failed:** {state.error}\\n\\n\" if state.error else \"\"\n    schema_dict = {\n    \"tables\": [\n        {\n            \"name\": \"annotations\",\n            \"aliases\": [\"notes\", \"comments\"],",
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
         "label": "get_analyze_query_prompt",
         "kind": 2,
         "importPath": "prompt_templates",
         "description": "prompt_templates",
-        "peekOfCode": "def get_analyze_query_prompt(state):\n     # Include error context if query execution previously failed\n    error_context = f\"⚠ **Previous Query Execution Failed:** {state.error}\\n\\n\" if state.error else \"\"\n    system_message = (\n        \"**User Query Breakdown Assistant**\\n\\n\"\n        \"You are an assistant that extracts key components from user queries.\\n\\n\"\n        \"**Query_Details (What Data to Fetch)**\"\n        \"- Identify **what information** the user wants from the database.\"\n        \"- Use the **table schema and relationships** provided below to **map user intent to the correct tables, columns, and constraints**.\"\n        \"- SQL functions like `SUM`, `COUNT`, `AVG`, ETC should be included in `Query_Details`,\"",
+        "peekOfCode": "def get_analyze_query_prompt(state):\n     # Include error context if query execution previously failed\n    error_context = f\"⚠ **Previous Query Execution Failed:** {state.error}\\n\\n\" if state.error else \"\"\n    schema_dict = {\n    \"tables\": [\n        {\n            \"name\": \"annotations\",\n            \"aliases\": [\"notes\", \"comments\"],\n            \"desc\": \"User annotations linked to hierarchy\",\n            \"fields\": [",
         "detail": "prompt_templates",
         "documentation": {}
     },
@@ -995,6 +1118,24 @@
         "importPath": "prompt_templates",
         "description": "prompt_templates",
         "peekOfCode": "def get_report_url_prompt() -> str:\n    prompt_template = ChatPromptTemplate.from_messages([\n        (\"system\",\"\"\"\n            ### *Prompt for LLM to Generate Context-Aware URL Based on User Query, SQL Query.*\n            Generate the appropriate URL based on the user query and SQL query using the rules and filters provided below.\n            ---\n            ### *Rules for Choosing the Correct View:*  \n            1. *If the user explicitly asks for hierarchy data*, generate a *Hierarchy View URL*, even if annotation-related filters are in the SQL query.  \n            2. *If the user explicitly asks for annotation data*, generate an *Annotation View URL*, even if `l1` is present.  \n            3. *If the user’s query is ambiguous*, analyze the SQL query:  ",
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "get_cypher_generation_prompt",
+        "kind": 2,
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "peekOfCode": "def get_cypher_generation_prompt() -> str:\n    return PromptTemplate(\n        template = \"\"\"\n            You are an expert in analyzing database schemas modeled in Neo4j. Write queries strictly according to **Neo4j Cypher syntax**.\n            In this Neo4j graph:\n            - Each **node** is a `Table` representing a **database table**.\n            - Each `Table` node contains properties that define the **fields (columns)** of that table.\n            - Each `Field` node is connected via a `[:CONTAINS]` relationship to its corresponding `Table`.\n            - Relationships between `Table` nodes (e.g., `REFERENCES`, `RECEIVES`) represent **schema-level links**, such as foreign key dependencies.\n            ---",
+        "detail": "prompt_templates",
+        "documentation": {}
+    },
+    {
+        "label": "get_qa_prompt",
+        "kind": 2,
+        "importPath": "prompt_templates",
+        "description": "prompt_templates",
+        "peekOfCode": "def get_qa_prompt() -> str:\n    return PromptTemplate(\n        template=\"\"\"\n        You are an assistant that summarizes database schema information retrieved from a Cypher query over a graph of tables and their relationships.\n        Your task is to:\n        - For each table, summarize its **fields (columns)** in plain English.\n        - Mention any **relationships** between the tables, if applicable.\n        - Write the summary in a way that helps a llm understand the structure for writing SQL queries.\n        Do **NOT** include actual business data or query results — only describe the schema (tables, fields, and their relationships).\n        ---",
         "detail": "prompt_templates",
         "documentation": {}
     },
