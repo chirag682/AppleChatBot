@@ -3,6 +3,7 @@ import json
 import pandas as pd
 from langchain_core.prompts import ChatPromptTemplate
 from config import llm
+from utils.decimal_encoder import DecimalEncoder
 
 def apply_general_processing_with_llm(state):
     """
@@ -11,7 +12,7 @@ def apply_general_processing_with_llm(state):
     """
 
     # Convert query result into structured JSON format for LLM
-    formatted_data = json.dumps(state.query_result, indent=2)
+    formatted_data = json.dumps({'query_result': state.query_result}, indent=2, cls=DecimalEncoder)
 
     df = pd.DataFrame(json.loads(formatted_data))
     parsed_data=df.to_csv()
@@ -66,3 +67,45 @@ def apply_general_processing_with_llm(state):
     final_output = processed_match.group(1).strip() if processed_match else processed_result
 
     return final_output
+
+
+def format_schema_to_string(schema_array):
+    """
+    Convert structured schema data into a human-readable string format.
+
+    Args:
+        schema_array (list): List containing a dict with 'primary_tables' and 'related_tables'.
+
+    Returns:
+        str: Formatted schema string.
+    """
+    output = []
+
+    # Extract the main schema dictionary from the list
+    schema_data = list(schema_array[0].values())[0]
+
+    for section in ['primary_tables', 'related_tables']:
+        for table in schema_data.get(section, []):
+            output.append(f"**Table: {table['table_name']}**")
+            for field in table['fields']:
+                line = f"- {field['name']} (type: {field['data_type']}"
+                extras = []
+
+                # Optionally include additional attributes
+                for key in ['alias', 'default', 'required']:
+                    if key in field:
+                        extras.append(f"{key}: {field[key]}")
+
+                if extras:
+                    line += ", " + ", ".join(extras)
+
+                line += ")"
+
+                # Add description if available
+                if 'description' in field:
+                    line += f": {field['description']}"
+
+                output.append(line)
+            output.append("")  # blank line between tables
+
+    return "\n".join(output)

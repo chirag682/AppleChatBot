@@ -345,6 +345,14 @@
         "documentation": {}
     },
     {
+        "label": "vectorstores",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
         "label": "llm",
         "importPath": "config",
         "description": "config",
@@ -393,11 +401,19 @@
         "documentation": {}
     },
     {
-        "label": "schema",
-        "importPath": "init_db",
-        "description": "init_db",
+        "label": "format_schema_to_string",
+        "importPath": "utils.format_final_response",
+        "description": "utils.format_final_response",
         "isExtraImport": true,
-        "detail": "init_db",
+        "detail": "utils.format_final_response",
+        "documentation": {}
+    },
+    {
+        "label": "apply_general_processing_with_llm",
+        "importPath": "utils.format_final_response",
+        "description": "utils.format_final_response",
+        "isExtraImport": true,
+        "detail": "utils.format_final_response",
         "documentation": {}
     },
     {
@@ -465,11 +481,11 @@
         "documentation": {}
     },
     {
-        "label": "apply_general_processing_with_llm",
-        "importPath": "utils.format_final_response",
-        "description": "utils.format_final_response",
+        "label": "sample_queries",
+        "importPath": "FAQ",
+        "description": "FAQ",
         "isExtraImport": true,
-        "detail": "utils.format_final_response",
+        "detail": "FAQ",
         "documentation": {}
     },
     {
@@ -570,6 +586,14 @@
         "documentation": {}
     },
     {
+        "label": "Decimal",
+        "importPath": "decimal",
+        "description": "decimal",
+        "isExtraImport": true,
+        "detail": "decimal",
+        "documentation": {}
+    },
+    {
         "label": "pandas",
         "kind": 6,
         "isExtraImport": true,
@@ -579,12 +603,29 @@
         "documentation": {}
     },
     {
+        "label": "DecimalEncoder",
+        "importPath": "utils.decimal_encoder",
+        "description": "utils.decimal_encoder",
+        "isExtraImport": true,
+        "detail": "utils.decimal_encoder",
+        "documentation": {}
+    },
+    {
         "label": "ast",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "ast",
         "description": "ast",
         "detail": "ast",
+        "documentation": {}
+    },
+    {
+        "label": "psycopg2",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "psycopg2",
+        "description": "psycopg2",
+        "detail": "psycopg2",
         "documentation": {}
     },
     {
@@ -663,6 +704,14 @@
     },
     {
         "label": "OllamaLLM",
+        "importPath": "langchain_ollama",
+        "description": "langchain_ollama",
+        "isExtraImport": true,
+        "detail": "langchain_ollama",
+        "documentation": {}
+    },
+    {
+        "label": "OllamaEmbeddings",
         "importPath": "langchain_ollama",
         "description": "langchain_ollama",
         "isExtraImport": true,
@@ -758,6 +807,14 @@
         "documentation": {}
     },
     {
+        "label": "Chroma",
+        "importPath": "langchain_chroma",
+        "description": "langchain_chroma",
+        "isExtraImport": true,
+        "detail": "langchain_chroma",
+        "documentation": {}
+    },
+    {
         "label": "sqlite3",
         "kind": 6,
         "isExtraImport": true,
@@ -820,7 +877,7 @@
         "kind": 2,
         "importPath": "nodes.analyze_schema",
         "description": "nodes.analyze_schema",
-        "peekOfCode": "def analyze_schema_node(state: AgentState):\n    cypher_prompt = get_cypher_generation_prompt()\n    qa_prompt = get_qa_prompt()\n    print(cypher_prompt)\n    graph_rag_chain = GraphCypherQAChain.from_llm(\n        cypher_llm=llm,\n        qa_llm=llm,\n        validate_cypher=True,\n        graph=graph,\n        verbose=True,",
+        "peekOfCode": "def analyze_schema_node(state: AgentState):\n    cypher_prompt = get_cypher_generation_prompt()\n    qa_prompt = get_qa_prompt()\n    graph_rag_chain = GraphCypherQAChain.from_llm(\n        cypher_llm=llm,\n        qa_llm=llm,\n        validate_cypher=True,\n        graph=graph,\n        verbose=True,\n        return_intermediate_steps=True,",
         "detail": "nodes.analyze_schema",
         "documentation": {}
     },
@@ -829,7 +886,7 @@
         "kind": 2,
         "importPath": "nodes.generate_sql_query",
         "description": "nodes.generate_sql_query",
-        "peekOfCode": "def generate_sql_node(state: AgentState):\n    # chroma_results = vectorstores.max_marginal_relevance_search(AgentState.user_query,  k=10, fetch_k=20)  # Returns (Document, distance)\n    # # Extract only user query texts from ChromaDB results\n    # retrieved_queries = [doc.page_content for doc in chroma_results]\n    # Dictionary for quick lookup of SQL queries\n    # query_mapping = {item[\"user_input\"]: item[\"query\"] for item in sample_queries}\n    # Find matching SQL queries\n    # matched_sql_queries = [\n    #     f\" User Query: {user_query}\\n   → SQL: {query_mapping.get(user_query, 'No SQL Query Found')}\"\n    #     for user_query in retrieved_queries",
+        "peekOfCode": "def generate_sql_node(state: AgentState):\n    chroma_results = vectorstores.max_marginal_relevance_search(state.user_query,  k=10, fetch_k=20)  # Returns (Document, distance)\n    # # Extract only user query texts from ChromaDB results\n    retrieved_queries = [doc.page_content for doc in chroma_results]\n    # Dictionary for quick lookup of SQL queries\n    query_mapping = {item[\"question\"]: item[\"answer\"] for item in sample_queries}\n    # Find matching SQL queries\n    matched_sql_queries = [\n        f\" User Query: {user_query}\\n   → SQL: {query_mapping.get(user_query, 'No SQL Query Found')}\"\n        for user_query in retrieved_queries",
         "detail": "nodes.generate_sql_query",
         "documentation": {}
     },
@@ -856,8 +913,26 @@
         "kind": 6,
         "importPath": "states.agent_state",
         "description": "states.agent_state",
-        "peekOfCode": "class AgentState(BaseModel):\n    user_query: str\n    cypher_details: Optional[str] = None\n    general_query: Optional[str] = None\n    db_query: Optional[str] = None\n    schema_info: Optional[list[Any]] = None\n    sql_query: Optional[str] = None\n    query_result: Optional[List[dict]] = None\n    error: Optional[str] = None\n    final_response: Optional[AIMessage | HumanMessage] = None",
+        "peekOfCode": "class AgentState(BaseModel):\n    user_query: str\n    cypher_details: Optional[str] = None\n    general_query: Optional[str] = None\n    db_query: Optional[str] = None\n    schema_info: Optional[str] = None\n    sql_query: Optional[str] = None\n    query_result: Optional[List[dict]] = None\n    error: Optional[str] = None\n    final_response: Optional[AIMessage | HumanMessage] = None",
         "detail": "states.agent_state",
+        "documentation": {}
+    },
+    {
+        "label": "DecimalEncoder",
+        "kind": 6,
+        "importPath": "utils.decimal_encoder",
+        "description": "utils.decimal_encoder",
+        "peekOfCode": "class DecimalEncoder(json.JSONEncoder):\n    \"\"\"\n    Custom JSON encoder that converts Decimal to float.\n    \"\"\"\n    def default(self, obj):\n        if isinstance(obj, Decimal):\n            return float(obj)\n        return super().default(obj)\ndef convert_decimals(obj):\n    \"\"\"",
+        "detail": "utils.decimal_encoder",
+        "documentation": {}
+    },
+    {
+        "label": "convert_decimals",
+        "kind": 2,
+        "importPath": "utils.decimal_encoder",
+        "description": "utils.decimal_encoder",
+        "peekOfCode": "def convert_decimals(obj):\n    \"\"\"\n    Recursively convert Decimals in a data structure to floats.\n    \"\"\"\n    if isinstance(obj, list):\n        return [convert_decimals(i) for i in obj]\n    elif isinstance(obj, dict):\n        return {k: convert_decimals(v) for k, v in obj.items()}\n    elif isinstance(obj, Decimal):\n        return float(obj)",
+        "detail": "utils.decimal_encoder",
         "documentation": {}
     },
     {
@@ -865,7 +940,16 @@
         "kind": 2,
         "importPath": "utils.format_final_response",
         "description": "utils.format_final_response",
-        "peekOfCode": "def apply_general_processing_with_llm(state):\n    \"\"\"\n    Uses LLM to process query results based on the general_query instructions.\n    This allows LLM to handle summarization, ranking, comparisons, etc.\n    \"\"\"\n    # Convert query result into structured JSON format for LLM\n    formatted_data = json.dumps(state.query_result, indent=2)\n    df = pd.DataFrame(json.loads(formatted_data))\n    parsed_data=df.to_csv()\n    action_query=state.general_query",
+        "peekOfCode": "def apply_general_processing_with_llm(state):\n    \"\"\"\n    Uses LLM to process query results based on the general_query instructions.\n    This allows LLM to handle summarization, ranking, comparisons, etc.\n    \"\"\"\n    # Convert query result into structured JSON format for LLM\n    formatted_data = json.dumps({'query_result': state.query_result}, indent=2, cls=DecimalEncoder)\n    df = pd.DataFrame(json.loads(formatted_data))\n    parsed_data=df.to_csv()\n    action_query=state.general_query",
+        "detail": "utils.format_final_response",
+        "documentation": {}
+    },
+    {
+        "label": "format_schema_to_string",
+        "kind": 2,
+        "importPath": "utils.format_final_response",
+        "description": "utils.format_final_response",
+        "peekOfCode": "def format_schema_to_string(schema_array):\n    \"\"\"\n    Convert structured schema data into a human-readable string format.\n    Args:\n        schema_array (list): List containing a dict with 'primary_tables' and 'related_tables'.\n    Returns:\n        str: Formatted schema string.\n    \"\"\"\n    output = []\n    # Extract the main schema dictionary from the list",
         "detail": "utils.format_final_response",
         "documentation": {}
     },
@@ -883,7 +967,7 @@
         "kind": 2,
         "importPath": "utils.run_sql_query",
         "description": "utils.run_sql_query",
-        "peekOfCode": "def run_sql_query(query):\n    \"\"\"Execute SQL query and return results.\"\"\"\n    try:\n        result = db.run(query, include_columns=True)\n        if result == '':\n         return 'Error executing query: No such data exists in the database'\n        data = ast.literal_eval(result)\n        return data\n    except Exception as e:\n        return f\"Error executing query: {e}\"",
+        "peekOfCode": "def run_sql_query(query):\n    \"\"\"Execute SQL query and return results.\"\"\"\n    try:\n        conn = psycopg2.connect(database=\"fintrack\", user=\"postgres\", password=\"App4ever#\", host=\"localhost\", port=\"5432\")\n        cursor = conn.cursor()\n        cursor.execute(query)\n        # Get column names\n        colnames = [desc[0] for desc in cursor.description]\n        # Get rows\n        rows = cursor.fetchall()",
         "detail": "utils.run_sql_query",
         "documentation": {}
     },
@@ -960,6 +1044,15 @@
         "documentation": {}
     },
     {
+        "label": "sample_queries",
+        "kind": 5,
+        "importPath": "FAQ",
+        "description": "FAQ",
+        "peekOfCode": "sample_queries = [\n  {\n    \"question\": \"What are the total hierarchies present?\",\n    \"answer\": \"SELECT COUNT(*) FROM hierarchy;\"\n  },\n  {\n    \"question\": \"What are the total annotations present?\",\n    \"answer\": \"SELECT COUNT(*) FROM annotations;\"\n  },\n  {",
+        "detail": "FAQ",
+        "documentation": {}
+    },
+    {
         "label": "check_success",
         "kind": 2,
         "importPath": "chatbot",
@@ -991,7 +1084,7 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "llm = ChatOllama(model=\"gemma3:12b\")\ndb = SQLDatabase.from_uri(\"sqlite:///my_database.db\")\ngraph = Neo4jGraph(\n    url=\"neo4j+ssc://ac98a301.databases.neo4j.io\",     # or your remote URL\n    username=\"neo4j\",\n    password=\"IFlZqtxj3aTAOLwup5CZwftdAQFvzt8obpyfPSrZ3aM\"\n)",
+        "peekOfCode": "llm = ChatOllama(model=\"gemma3:12b\")\ndb = SQLDatabase.from_uri(\"sqlite:///my_database.db\")\ngraph = Neo4jGraph(\n    url=\"neo4j+ssc://ac98a301.databases.neo4j.io\",     # or your remote URL\n    username=\"neo4j\",\n    password=\"IFlZqtxj3aTAOLwup5CZwftdAQFvzt8obpyfPSrZ3aM\"\n)\n#Embedding Model\nollama_embeddings = OllamaEmbeddings(\n    model=\"nomic-embed-text\"",
         "detail": "config",
         "documentation": {}
     },
@@ -1000,7 +1093,7 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "db = SQLDatabase.from_uri(\"sqlite:///my_database.db\")\ngraph = Neo4jGraph(\n    url=\"neo4j+ssc://ac98a301.databases.neo4j.io\",     # or your remote URL\n    username=\"neo4j\",\n    password=\"IFlZqtxj3aTAOLwup5CZwftdAQFvzt8obpyfPSrZ3aM\"\n)",
+        "peekOfCode": "db = SQLDatabase.from_uri(\"sqlite:///my_database.db\")\ngraph = Neo4jGraph(\n    url=\"neo4j+ssc://ac98a301.databases.neo4j.io\",     # or your remote URL\n    username=\"neo4j\",\n    password=\"IFlZqtxj3aTAOLwup5CZwftdAQFvzt8obpyfPSrZ3aM\"\n)\n#Embedding Model\nollama_embeddings = OllamaEmbeddings(\n    model=\"nomic-embed-text\"\n)",
         "detail": "config",
         "documentation": {}
     },
@@ -1009,7 +1102,25 @@
         "kind": 5,
         "importPath": "config",
         "description": "config",
-        "peekOfCode": "graph = Neo4jGraph(\n    url=\"neo4j+ssc://ac98a301.databases.neo4j.io\",     # or your remote URL\n    username=\"neo4j\",\n    password=\"IFlZqtxj3aTAOLwup5CZwftdAQFvzt8obpyfPSrZ3aM\"\n)",
+        "peekOfCode": "graph = Neo4jGraph(\n    url=\"neo4j+ssc://ac98a301.databases.neo4j.io\",     # or your remote URL\n    username=\"neo4j\",\n    password=\"IFlZqtxj3aTAOLwup5CZwftdAQFvzt8obpyfPSrZ3aM\"\n)\n#Embedding Model\nollama_embeddings = OllamaEmbeddings(\n    model=\"nomic-embed-text\"\n)\nvectorstores = Chroma(",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "ollama_embeddings",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "ollama_embeddings = OllamaEmbeddings(\n    model=\"nomic-embed-text\"\n)\nvectorstores = Chroma(\n    collection_name=\"business_data_vector_store\",\n    embedding_function=ollama_embeddings,\n    persist_directory=\"./chromeDB\"\n)",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "vectorstores",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "vectorstores = Chroma(\n    collection_name=\"business_data_vector_store\",\n    embedding_function=ollama_embeddings,\n    persist_directory=\"./chromeDB\"\n)",
         "detail": "config",
         "documentation": {}
     },
@@ -1090,7 +1201,7 @@
         "kind": 2,
         "importPath": "prompt_templates",
         "description": "prompt_templates",
-        "peekOfCode": "def escape_curly_braces(text):\n    return text.replace(\"{\", \"{{\").replace(\"}\", \"}}\")\ndef get_analyze_query_prompt(state):\n     # Include error context if query execution previously failed\n    error_context = f\"⚠ **Previous Query Execution Failed:** {state.error}\\n\\n\" if state.error else \"\"\n    schema_dict = {\n    \"tables\": [\n        {\n            \"name\": \"annotations\",\n            \"aliases\": [\"notes\", \"comments\"],",
+        "peekOfCode": "def escape_curly_braces(text):\n    return text.replace(\"{\", \"{{\").replace(\"}\", \"}}\")\ndef get_analyze_query_prompt(state):\n     # Include error context if query execution previously failed\n    error_context = f\"⚠ **Previous Query Execution Failed:** {state.error}\\n\\n\" if state.error else \"\"\n#     schema_dict = {\n#     \"tables\": [\n#         {\n#             \"name\": \"hierarchy\",\n#             \"aliases\": [\"organisation\", \"categories\", \"classification\"],",
         "detail": "prompt_templates",
         "documentation": {}
     },
@@ -1099,7 +1210,7 @@
         "kind": 2,
         "importPath": "prompt_templates",
         "description": "prompt_templates",
-        "peekOfCode": "def get_analyze_query_prompt(state):\n     # Include error context if query execution previously failed\n    error_context = f\"⚠ **Previous Query Execution Failed:** {state.error}\\n\\n\" if state.error else \"\"\n    schema_dict = {\n    \"tables\": [\n        {\n            \"name\": \"annotations\",\n            \"aliases\": [\"notes\", \"comments\"],\n            \"desc\": \"User annotations linked to hierarchy\",\n            \"fields\": [",
+        "peekOfCode": "def get_analyze_query_prompt(state):\n     # Include error context if query execution previously failed\n    error_context = f\"⚠ **Previous Query Execution Failed:** {state.error}\\n\\n\" if state.error else \"\"\n#     schema_dict = {\n#     \"tables\": [\n#         {\n#             \"name\": \"hierarchy\",\n#             \"aliases\": [\"organisation\", \"categories\", \"classification\"],\n#             \"desc\": \"Represents the full organizational category structure across multiple levels (L1 to L5). Each record defines a hierarchical node with optional metrics and metadata. It includes flags like `is_leaf` to denote terminal nodes and `is_forecast` for forecast-related nodes. Also tracks associated groups, textual descriptions, past financial performance, and entity counts (e.g., users and accounts). This table is referenced by several others including annotations, forecasts, accounts, and user-role mappings\",\n#             \"fields\": [",
         "detail": "prompt_templates",
         "documentation": {}
     },
@@ -1108,7 +1219,7 @@
         "kind": 2,
         "importPath": "prompt_templates",
         "description": "prompt_templates",
-        "peekOfCode": "def get_sql_generation_prompt() -> str:\n    \"\"\"\n    Generate an SQL query prompt based on the current state and database schema.\n    Parameters:\n    - state (dict): Contains user input details (e.g., tables, columns, conditions, etc.).\n    Returns:\n    - str: SQL query prompt.\n    \"\"\"\n    prompt =  ChatPromptTemplate.from_messages([\n        (\"system\", \"\"\"",
+        "peekOfCode": "def get_sql_generation_prompt() -> str:\n    \"\"\"\n    Generate an SQL query prompt based on the current state and database schema.\n    Parameters:\n    - state (dict): Contains user input details (e.g., tables, columns, conditions, etc.).\n    Returns:\n    - str: SQL query prompt.\n    \"\"\"\n    prompt =  ChatPromptTemplate.from_messages([\n        # (\"system\", \"\"\"",
         "detail": "prompt_templates",
         "documentation": {}
     },
@@ -1126,7 +1237,7 @@
         "kind": 2,
         "importPath": "prompt_templates",
         "description": "prompt_templates",
-        "peekOfCode": "def get_cypher_generation_prompt() -> str:\n    return PromptTemplate(\n        template = \"\"\"\n            You are an expert in analyzing database schemas modeled in Neo4j. Write queries strictly according to **Neo4j Cypher syntax**.\n            In this Neo4j graph:\n            - Each **node** is a `Table` representing a **database table**.\n            - Each `Table` node contains properties that define the **fields (columns)** of that table.\n            - Each `Field` node is connected via a `[:CONTAINS]` relationship to its corresponding `Table`.\n            - Relationships between `Table` nodes (e.g., `REFERENCES`, `RECEIVES`) represent **schema-level links**, such as foreign key dependencies.\n            ---",
+        "peekOfCode": "def get_cypher_generation_prompt() -> str:\n    return PromptTemplate(\n        # template = \"\"\"\n        #     You are an expert in analyzing database schemas modeled in Neo4j. Write queries strictly according to **Neo4j Cypher syntax**.\n        #     In this Neo4j graph:\n        #     - Each **node** is a `Table` representing a **database table**.\n        #     - Each `Table` node contains properties that define the **fields (columns)** of that table.\n        #     - Each `Field` node is connected via a `[:CONTAINS]` relationship to its corresponding `Table`.\n        #     - Relationships between `Table` nodes (e.g., `REFERENCES`, `RECEIVES`) represent **schema-level links**, such as foreign key dependencies.\n        #     ---",
         "detail": "prompt_templates",
         "documentation": {}
     },
@@ -1135,7 +1246,7 @@
         "kind": 2,
         "importPath": "prompt_templates",
         "description": "prompt_templates",
-        "peekOfCode": "def get_qa_prompt() -> str:\n    return PromptTemplate(\n        template=\"\"\"\n        You are an assistant that summarizes database schema information retrieved from a Cypher query over a graph of tables and their relationships.\n        Your task is to:\n        - For each table, summarize its **fields (columns)** in plain English.\n        - Mention any **relationships** between the tables, if applicable.\n        - Write the summary in a way that helps a llm understand the structure for writing SQL queries.\n        Do **NOT** include actual business data or query results — only describe the schema (tables, fields, and their relationships).\n        ---",
+        "peekOfCode": "def get_qa_prompt() -> str:\n    return PromptTemplate(\n        input_variables=[\"context\"],\n        template=\"\"\"\n            You are an intelligent assistant that summarizes a graph-based database schema for use by an LLM to write accurate SQL queries.\n            Given a graph schema (from Neo4j or similar), your job is to extract all tables and their fields, and format them in a clean, structured text format so that an LLM can easily understand the structure.\n            You are a data understanding assistant. You will be given structured input containing a list of tables and their fields (columns), extracted from a graph database (Neo4j or similar).\n            Your goal is to convert this into a **readable string** that clearly shows each table and its fields, with useful metadata.\n            ---\n            ### Input format:",
         "detail": "prompt_templates",
         "documentation": {}
     },

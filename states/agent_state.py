@@ -8,7 +8,7 @@ class AgentState(BaseModel):
     cypher_details: Optional[str] = None
     general_query: Optional[str] = None
     db_query: Optional[str] = None
-    schema_info: Optional[list[Any]] = None
+    schema_info: Optional[str] = None
     sql_query: Optional[str] = None
     query_result: Optional[List[dict]] = None
     error: Optional[str] = None
