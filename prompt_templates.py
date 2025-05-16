@@ -299,10 +299,11 @@ def get_sql_generation_prompt() -> str:
             • Don’t assume type from column name — always refer to schema.
                 - e.g. `fiscal_year` might be `integer` or `varchar`.
             • Adjust comparisons and functions accordingly:
-                - If `varchar`: use `LIKE`, `ILIKE`, `SUBSTRING()`, etc.
+                - If `varchar`: use , `LOWER()`, `SUBSTRING()`, etc.
                 - If `int/date`: use `=`, `>=`, `EXTRACT()`, etc.
             • Use `CAST()` when crossing types, like:  
                 `CAST(fiscal_year AS INT)` or `CAST(period_str AS DATE)`
+                -- Note: ILIKE and LIKE do not work directly with ENUM or USER_DEFINED values; cast to text before using them.
 
             3. **Time-Sensitive Handling**
             • Use correct logic for `timestamp` vs `varchar` date fields.
@@ -311,7 +312,8 @@ def get_sql_generation_prompt() -> str:
             • Avoid using `EXTRACT()` on non-date fields.
 
             4. **Case-Insensitive Text Matching**
-            • Use `ILIKE` or `LOWER(col) = LOWER(val)` for all text filters.
+            • Use `LOWER(col) = LOWER(val)` for all text filters.
+            • Prefer not to use ILIKE/LIKE unless the user explicitly requests case-insensitive or pattern matching, 
 
             5. **Hierarchies**
             • If the question involves hierarchy, include all levels:
@@ -334,8 +336,8 @@ def get_sql_generation_prompt() -> str:
 
             ────────────────────────────────────────────────────────
             SIMILAR QUERIES REFERENCE 
-            {{
-                user_query:  List yearly wise spend for Infrastructure hierarchy,
+            [
+                {{user_query:  List yearly wise spend for Infrastructure hierarchy,
                 sql : 'SELECT
                         monthly_forecast.fiscal_year AS fiscal_year,
                         SUM(monthly_forecast.spend) AS total_spend
@@ -348,8 +350,24 @@ def get_sql_generation_prompt() -> str:
                     GROUP BY
                         fiscal_year
                     ORDER BY
-                        fiscal_year;',
-            }}
+                        fiscal_year;'}},
+                {{user_query:  List month wise spend for AWS cloud provider for acare hierarchy for current year,
+                    sql : 'SELECT
+                            monthly_forecast.fiscal_year AS fiscal_year,
+                            monthly_forecast.fiscal_month AS fiscal_month,
+                            SUM(monthly_forecast.spend) AS total_spend
+                        FROM
+                            monthly_forecast
+                        JOIN
+                            hierarchy ON monthly_forecast.hierarchy_id = hierarchy.id
+                        WHERE
+                            lower(hierarchy.l1) = lower('Infrastructure') AND LOWER(monthly_forecast.cloud_provider::text) = LOWER('AWS') --cloud_provider is an ENUM, and PostgreSQL does not allow applying LOWER() directly to ENUM values — similar to how ILIKE fails on ENUMs.
+                            AND monthly_forecast.fiscal_year = EXTRACT(YEAR FROM NOW())
+                        GROUP BY
+                            fiscal_year, fiscal_month
+                        ORDER BY
+                            fiscal_year, fiscal_month;'}}
+            ]
             {chroma_results}
 
             Use these for structure & logic. Never copy unless the meaning matches exactly.
