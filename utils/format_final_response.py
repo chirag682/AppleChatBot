@@ -10,56 +10,100 @@ def apply_general_processing_with_llm(state):
     Uses LLM to process query results based on the general_query instructions.
     This allows LLM to handle summarization, ranking, comparisons, etc.
     """
-
+    query_result = state.query_result
+    action_query=state.general_query
+    user_query=state.user_query
     # Convert query result into structured JSON format for LLM
-    formatted_data = json.dumps({'query_result': state.query_result}, indent=2, cls=DecimalEncoder)
+    formatted_data = json.dumps({'query_result':  query_result}, indent=2, cls=DecimalEncoder)
 
     df = pd.DataFrame(json.loads(formatted_data))
     parsed_data=df.to_csv()
-
-    action_query=state.general_query
+    parsed_data_safe = parsed_data.replace('{', '{{').replace('}', '}}')
+  
+    
     # If no additional processing is required, return the raw results
-    if state.general_query.lower() == "no additional processing required.":
-        action_query=state.user_query
+    if action_query.lower() == "no additional processing required.":
+        action_query=query_result
 
     # Construct LLM Prompt
     system_message = (
-        "** Intelligent Data Processing Assistant**\n\n"
-        "You are an **expert at transforming structured data** into human-readable insights.\n\n"
+        """
+        ### Intelligent Data Processing Assistant
 
-        "### ** Data Provided:**\n"
-        f"User Question: {state.user_query}\n"
-        f"User's detailed question: {action_query}\n"
-        f"SQL Query: {state.sql_query}\n"
-        f"Data: {parsed_data}\n"
-        "**Task:**\n"
-        "- You will receive a dataset returned from an SQL query. The data will be presented in a structured format such as a table or JSON object."
-        # "- Your job is to analyze the data and provide a clear, natural-language summary that explains the key insights."
-        "- Your job is to analyze the data and provide a clear and concise answer according to the provided **User Question** and with all **Data**"
-        "- if **User Question** or **User's detailed question** asks for summary only then summarize the **Data** other wise provide a clear and concise answer"
-        "- Ensure the explanation is easy to understand, even for someone without technical expertise."
-        "**Instructions:**\n"
-        "- Provide a clear, concise answer based on the data.\n"
-        "- Base your answer strictly on the provided data and do not make any assumptions about data not present in the results.\n"
-        "- Focus on natural language, using the SQL context as needed.\n"
-        "**Additional Guidelines:**\n"
-        "- Keep the response concise but informative."
-        "- If the data includes monetary values, use appropriate formatting (e.g., '$' for USD)."
-        "- If the data includes dates, present them in a natural format (e.g., 'January 1, 2025')."
-        "- If the data shows growth or decline, mention it explicitly and provide possible reasons if applicable."
-        "- If different users contains same annotations treat them as different. don't combine them"
-        "- If a user asks for an annotation summary,then provide the explanation of provided content from the annotation table. The user may also request additional details about the annotations, which is specified in the user query (such as specific hierarchy, time range, or other relevant filters)."
-        "**Important**\n"
-        "- If any part of the data is unclear or incomplete, mention it but do not guess."
-        "- If the data is inconsistent or contains errors, point them out respectfully."
+        You are an **expert at transforming structured data** into clear, decision-ready insights based on SQL query outputs.
+
+        ---
+
+        ### Data Provided
+            - **User Question:** {user_query}
+            - **User's Detailed Question:** {action_query}
+            - **SQL Query:** {sql_query}
+            - **Data:** {parsed_data_safe}
+
+        ---
+
+        ### Your Task
+
+        You will receive a dataset returned from an SQL query in structured format (JSON/table).  
+        Your job is to:
+
+        1. **Understand the intent**
+        - Summarize the user’s goal in ≤15 words to anchor the analysis.
+
+        2. **Explore the data**
+        - Identify any date/time columns and derive period labels (week, month, quarter, year).
+        - Calculate relevant changes (WoW, MoM, QoQ, or YoY) in the dataset.
+        - Identify top and bottom contributors to the key metric(s).
+        - Flag anomalies: values > ±2σ from the mean or changes ≥50%.
+        - If the user asks for annotation summary, explain annotation content with relevant context (e.g., hierarchy, filters).
+
+        3. **Generate a plain-English explanation**
+        - Use **natural, clear language** appropriate for non-technical audiences.
+        - Tailor your explanation to the user’s exact question.
+        - Follow the output format below.
+        - If the dataset is too small or lacks date info, return exactly:  
+            **"Not enough relevant data for meaningful analysis."**
+
+        ---
+
+        ### Instructions
+        - Base all insights strictly on the provided data — **no assumptions**.
+        - Be concise but informative.
+        - If the data includes monetary values, format appropriately (e.g., `$1,200`).
+        - Use human-readable date formats (e.g., "January 2025").
+        - Highlight growth/decline explicitly, with percentage change and suggested drivers.
+        - Treat users/entities with the same annotations as **distinct**, unless explicitly stated.
+        - If data is unclear or inconsistent, mention it **without guessing**.
+
+        ---
+
+        ### Output Format (Markdown Only)
+
+        **Insight Summary**  
+        <Concise narrative: 4–6 sentences summarizing the key findings relevant to the user’s goal.>
+
+        **Details**  
+        - **Trend:** …  
+        - **Top drivers:** …  
+        - **Anomalies:** … (omit if none)
+
+        (End of answer)
+        """
     )
+    
     # Construct LLM prompt
     prompt_template = ChatPromptTemplate.from_messages([
         ("system", system_message)
     ])
-
+    
     # Invoke LLM for processing
-    response = llm.invoke(prompt_template.format())
+    response = llm.invoke(prompt_template.format(
+        user_query=user_query,
+        action_query=action_query,
+        sql_query=state.sql_query,
+        parsed_data_safe=parsed_data_safe
+    ))
+
     processed_result = response.content.strip()
 
     # Extract structured output using regex
@@ -88,7 +132,7 @@ def format_schema_to_string(schema_array):
         for table in schema_data.get(section, []):
             output.append(f"**Table: {table['table_name']}**")
             for field in table['fields']:
-                line = f"- {field['name']} (type: {field['data_type']}"
+                line = f"- {field['name']} (data-type: {field['data_type']}"
                 extras = []
 
                 # Optionally include additional attributes

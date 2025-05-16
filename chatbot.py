@@ -14,7 +14,6 @@ from langchain_ollama import OllamaLLM
 from langchain_community.chat_models import ChatOllama
 from langchain_community.chat_models import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
-from tools import generate_common_query
 import pandas as pd
 import json
 from langchain_core.prompts import ChatPromptTemplate

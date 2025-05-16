@@ -108,8 +108,6 @@ def get_analyze_query_prompt(state):
         - Frequently combined with: user_role (to filter annotations by user) and monthly_forecast (for annotated metrics)
     """
 
-    # escaped_schema_json = escape_curly_braces(json.dumps(schema_dict, indent=2))
-
     
     system_message = (
         "**User Query Breakdown Assistant**\n"
@@ -175,140 +173,189 @@ def get_sql_generation_prompt() -> str:
     
     prompt =  ChatPromptTemplate.from_messages([
         # ("system", """
-        # You are an expert SQL assistant with access to a relational database.
-        # Generate a **correct and optimized** SQL query for the given user question.
+        #   You are an expert SQL assistant with access to a **PostgreSQL relational database**.  
+        # Generate a **correct and optimized PostgreSQL SQL query** based on the user's request.
 
-        # Below is the **table structure** and **relationships** in the database.
-        # Use this information to generate correct SQL queries.
+        # Below is the **table schema** and **foreign key relationships** in the database.  
+        # Use only this information to determine table names, columns, and join paths.
 
         # {schema_info}
 
-        # - Each entry represents a table with its column names and data types.
-        # - **If the user asks for hierarchy-related data, always fetch all levels (`l1, l2, l3, l4, l5`) from hierarcy table.** 
-        # - **Ensure you only query existing columns from this schema.**
-        # - **Use these relationships when joining tables** instead of making assumptions.
-        # - **Example Mapping:** If the user asks for "status," check if it's available under "annotation_status."
+        # - Each entry represents a table along with its column names and data types.
+        # - **If the user asks for hierarchy-related data, always include all levels (`l1, l2, l3, l4, l5`) from the `hierarchy` table.**  
+        # - **Strictly use only the columns and tables defined in the schema.**
+        # - **If aliases are used in the user request, resolve them using the schema’s alias mappings.**
+        # - **When joining tables, base your logic on explicitly defined foreign key relationships.**
 
         # ---
 
-        # **Rules:**
-        # - Ensure correctness by validating column names.
-        # - Use **INNER JOINs** by default when combining tables to ensure only matching records are retrieved.  
-        # - Use **LEFT/RIGHT/FULL JOINs** only if the query requires retrieving unmatched records from one table.  
-        # - Always refer to the **schema and relationships** to determine the appropriate join conditions.
-        # - Retrieve only relevant columns (avoid SELECT *).
-        # - DO NOT execute any INSERT, UPDATE, DELETE, or DROP statements.
-        # - **For filtering data based on the current date, use SQLite's `strftime()` function** instead of `EXTRACT()` or `CURRENT_DATE`.  
-        # - Example for filtering records from the current month:
-        # ```sql
-        # WHERE strftime('%Y', column_name) = strftime('%Y', 'now')
-        #     AND strftime('%m', column_name) = strftime('%m', 'now')
-        # -Make Conditions Case-Insensitive:
-        #     Use LOWER() or UPPER() to make value matching case-insensitive.
-        #     WHERE LOWER(a.l1) = LOWER('Finance')
-        # - When the user asks for "last month" or "last year," generate a query that retrieves data from the first to the last day of the previous calendar month or year.
-        # - When the user asks for "current month" or "current year," retrieve data from the first day of the current calendar period until now.
-        # - If the user asks for "last 30 days" or "last 365 days," generate a rolling window query.
-        # - If the user specifies a custom date range, reflect the exact range in the query.
-        # - If the query is ambiguous, prioritize the most logical complete period (e.g., last full month).
+        # **Rules for Query Generation (PostgreSQL-specific):**
+        # - Ensure correctness: **Validate column names and data types.**
+        # - Use **INNER JOIN** by default for combining related tables.
+        # - Use **LEFT/RIGHT/FULL JOIN** only when necessary (e.g., to include unmatched records).
+        # - Always reference explicit foreign key constraints for joins.
+        # - Use **`SELECT column1, column2, ...`** rather than `SELECT *` to return only relevant data.
+        # - Avoid generating any **INSERT, UPDATE, DELETE, or DROP** statements.
+        # - Use **PostgreSQL functions** for date filtering and time-based logic.
+        # - **If aliases are used in the user request, resolve them using the schema’s alias mappings.**
+        # - **When joining tables, base your logic on explicitly defined foreign key relationships.**
+        # - **Fields maybe defined as `ENUM`, `USER-DEFINED`, or categorical types may be stored as `character varying` or `text`. Always verify and match based on the provided schema definition, not assumptions.**
+            
+        # - Case-Insensitive Matching
+        #     Always use LOWER() or ILIKE to perform case-insensitive comparisons:
+        #     WHERE LOWER(table.column) = LOWER('value')
+        #     -- or --
+        #     WHERE table.column ILIKE 'value'
+            
+        # - When selecting fields from the schema, always include **contextual or grouping fields** if they help improve clarity or visualization:
+        #     - Example: If fetching `fiscal_month`, also fetch `fiscal_year` (and `fiscal_quarter` if available).
+        #     - If fetching metrics like `spend`, `forecast`, or `plug`, also include identifiers like `cost_center`, `cloud_provider`, or any related `comment` or `owner` fields.
+        #     - Prioritize columns that can:
+        #     - Help explain the time period (`year`, `quarter`)
+        #     - Group the data meaningfully (`cost_center`, `cloud_provider`)
+        #     - Add clarity for visual analysis (`comment`, `owner`, `category`)
+        #     - Do **not ask the user** whether these fields are needed — include them proactively only if they exist in the schema.
+        #     - Similar to selecting the main table from the schema, always include **contextual or grouping fields** if they help improve clarity or visualization of the data.
+        #         For example, when selecting time-based fields like `fiscal_month`, also include `fiscal_year` or `fiscal_quarter` if available.
+        #         When selecting metrics like `spend`, `forecast`, or `usage`, include identifying or grouping fields like `cost_center`, `cloud_provider`, or `account_id`.
+        #         These fields improve sorting, grouping, and interpretation in downstream tasks (e.g., dashboards, summaries, analytics).
+
+        ### Time-Sensitive Condition Handling:
+
+        # When applying conditions on time-related fields (e.g., filtering by month, year, or date), always check the field's data type and adjust the condition accordingly:
+
+        # - If the field is of type `timestamp` or `date`, use SQL date functions such as `EXTRACT()`, `DATE_TRUNC()`, or direct comparisons:
+        # - Example: `EXTRACT(YEAR FROM created_at) = 2024` or `created_at >= DATE '2023-01-01'`
+        # - Always apply **explicit type casting** where needed, such as `CAST(field AS DATE)`, to avoid argument type mismatches.
+
+        # - If the field is of type `character varying` (e.g., values like `'2024-Q1'`, `'May 2024'`), use string-based filters like `LIKE`, `LEFT()`, or `SUBSTRING()`:
+        # - Example: `fiscal_period LIKE '2024%'` or `LEFT(period_str, 4) = '2023'`
+
+        # - When filtering by `month`, always check if a related `year` field is available and include both in the condition when possible.
+
+        # -- When generating conditions for **current year**, **current month**, or **current quarter**, always use `NOW()` instead of `CURRENT_DATE`:
+        #     -  Correct: `EXTRACT(YEAR FROM field) = EXTRACT(YEAR FROM NOW())`
+        #     -  Avoid: `EXTRACT(YEAR FROM field) = EXTRACT(YEAR FROM CURRENT_DATE)`
+            
+        # - **Use `EXTRACT()` only on timestamp/date columns.**  
+        # - All time-related conditions must be generated based on the schema-provided fields only. Avoid inferring dynamic dates unless instructed.
 
 
-        # ### *Similar User Queries & their queries Responses*
-        # Below are previously retrieved user queries along with their corresponding SQL queries. Use these examples to understand query patterns and generate the most accurate SQL query:
+        # Ambiguity Handling:
+        # If the user query is ambiguous, choose the most complete logical period (e.g., last full month, current year-to-date).
+        # If unsure of exact intent, prefer retrieving full datasets rather than partial ones.
+        
+        # This provides key details extracted from the user's query to help generate accurate SQL. You can reference the following information: {db_query}.
+        
+        # Similar User Queries & Corresponding SQL Responses
+        # The examples below are past user queries along with correct SQL responses.
+        # Use them to learn structure and intent, not for copy-pasting.
 
         # {chroma_results}
 
-        # - Use this queries only as a reference.
-        # - DO NOT copy queries directly unless they exactly match the current user request.
-        # - Modify queries to fit the current request while following schema constraints.
+        # Use these queries only as reference patterns.
+        # DO NOT copy any example unless it exactly matches the current request.
+
+        # Adapt and generate the correct SQL based on schema, relationships, and current query only.
         # """),
         # ("user", "{input}")
     
         ("system", """
-        You are an expert SQL assistant with access to a **PostgreSQL relational database**.  
-        Generate a **correct and optimized PostgreSQL SQL query** based on the user's request.
+            You are a PostgreSQL SQL generation assistant.
 
-        Below is the **table schema** and **foreign key relationships** in the database.  
-        Use only this information to determine table names, columns, and join paths.
+            Your task is to generate a **correct, complete, and optimized SQL query** by synthesizing:
+            • The user’s natural-language question (`user_query`)
+            • A schema-aware interpretation of their request (`db_query`)
+            • The full database schema and relationships (`schema_info`)
+            • Example historical queries for guidance (`chroma_results`)
 
-        {schema_info}
+            ────────────────────────────────────────────────────────
 
-        - Each entry represents a table along with its column names and data types.
-        - **If the user asks for hierarchy-related data, always include all levels (`l1, l2, l3, l4, l5`) from the `hierarchy` table.**  
-        - **Strictly use only the columns and tables defined in the schema.**
-        - **If aliases are used in the user request, resolve them using the schema’s alias mappings.**
-        - **When joining tables, base your logic on explicitly defined foreign key relationships.**
+            INTERPRETED DB QUERY
+            {db_query}
 
-        ---
+            Treat this as a helpful reformulation grounded in schema terminology. Use it to:
+            • Resolve ambiguous terms
+            • Align synonyms or alias-like language
+            • Choose correct tables and fields
 
-        **Rules for Query Generation (PostgreSQL-specific):**
-        - Ensure correctness: **Validate column names and data types.**
-        - Use **INNER JOIN** by default for combining related tables.
-        - Use **LEFT/RIGHT/FULL JOIN** only when necessary (e.g., to include unmatched records).
-        - Always reference explicit foreign key constraints for joins.
-        - Use **`SELECT column1, column2, ...`** rather than `SELECT *` to return only relevant data.
-        - Avoid generating any **INSERT, UPDATE, DELETE, or DROP** statements.
-        - Use **PostgreSQL functions** for date filtering and time-based logic.
-        - **If aliases are used in the user request, resolve them using the schema’s alias mappings.**
-        - **When joining tables, base your logic on explicitly defined foreign key relationships.**
-        - **Fields maybe defined as `ENUM`, `USER-DEFINED`, or categorical types may be stored as `character varying` or `text`. Always verify and match based on the provided schema definition, not assumptions.**
-            
-        - Case-Insensitive Matching
-            Always use LOWER() or ILIKE to perform case-insensitive comparisons:
-            WHERE LOWER(table.column) = LOWER('value')
-            -- or --
-            WHERE table.column ILIKE 'value'
-            
-        - When selecting fields from the schema, always include **contextual or grouping fields** if they help improve clarity or visualization:
-            - Example: If fetching `fiscal_month`, also fetch `fiscal_year` (and `fiscal_quarter` if available).
-            - If fetching metrics like `spend`, `forecast`, or `plug`, also include identifiers like `cost_center`, `cloud_provider`, or any related `comment` or `owner` fields.
-            - Prioritize columns that can:
-            - Help explain the time period (`year`, `quarter`)
-            - Group the data meaningfully (`cost_center`, `cloud_provider`)
-            - Add clarity for visual analysis (`comment`, `owner`, `category`)
-            - Do **not ask the user** whether these fields are needed — include them proactively only if they exist in the schema.
-            - Similar to selecting the main table from the schema, always include **contextual or grouping fields** if they help improve clarity or visualization of the data.
-                For example, when selecting time-based fields like `fiscal_month`, also include `fiscal_year` or `fiscal_quarter` if available.
-                When selecting metrics like `spend`, `forecast`, or `usage`, include identifying or grouping fields like `cost_center`, `cloud_provider`, or `account_id`.
-                These fields improve sorting, grouping, and interpretation in downstream tasks (e.g., dashboards, summaries, analytics).
+            ────────────────────────────────────────────────────────
+            SCHEMA & RELATIONSHIPS
+            {schema_info}
 
-        ### Time-Sensitive Condition Handling:
+            — Use only columns/tables listed.
+            — Use declared foreign key relationships for joins.
+            — Never invent columns or guess join paths.
 
-        When applying conditions on time-related fields (e.g., filtering by month, year, or date), always check the field's data type and adjust the condition accordingly:
+            ────────────────────────────────────────────────────────
+            SQL GENERATION RULES
 
-        - If the field is of type `timestamp` or `date`, use SQL date functions such as `EXTRACT()`, `DATE_TRUNC()`, or direct comparisons:
-        - Example: `EXTRACT(YEAR FROM created_at) = 2024` or `created_at >= DATE '2023-01-01'`
-        - Always apply **explicit type casting** where needed, such as `CAST(field AS DATE)`, to avoid argument type mismatches.
+            1. **Correctness**
+            • Validate every table, column, and data type.
+            • Always choose join paths based on foreign key definitions.
+            • Never use `SELECT *` — project only relevant + contextual columns.
 
-        - If the field is of type `character varying` (e.g., values like `'2024-Q1'`, `'May 2024'`), use string-based filters like `LIKE`, `LEFT()`, or `SUBSTRING()`:
-        - Example: `fiscal_period LIKE '2024%'` or `LEFT(period_str, 4) = '2023'`
+            2. **Data-Type Awareness**
+            • Don’t assume type from column name — always refer to schema.
+                - e.g. `fiscal_year` might be `integer` or `varchar`.
+            • Adjust comparisons and functions accordingly:
+                - If `varchar`: use `LIKE`, `ILIKE`, `SUBSTRING()`, etc.
+                - If `int/date`: use `=`, `>=`, `EXTRACT()`, etc.
+            • Use `CAST()` when crossing types, like:  
+                `CAST(fiscal_year AS INT)` or `CAST(period_str AS DATE)`
 
-        - When filtering by `month`, always check if a related `year` field is available and include both in the condition when possible.
+            3. **Time-Sensitive Handling**
+            • Use correct logic for `timestamp` vs `varchar` date fields.
+            • Prefer `NOW()` over `CURRENT_DATE` for dynamic filters.
+            • Include `year` field when filtering by `month`, if possible.
+            • Avoid using `EXTRACT()` on non-date fields.
 
-        -- When generating conditions for **current year**, **current month**, or **current quarter**, always use `NOW()` instead of `CURRENT_DATE`:
-            -  Correct: `EXTRACT(YEAR FROM field) = EXTRACT(YEAR FROM NOW())`
-            -  Avoid: `EXTRACT(YEAR FROM field) = EXTRACT(YEAR FROM CURRENT_DATE)`
-            
-        - **Use `EXTRACT()` only on timestamp/date columns.**  
-        - All time-related conditions must be generated based on the schema-provided fields only. Avoid inferring dynamic dates unless instructed.
+            4. **Case-Insensitive Text Matching**
+            • Use `ILIKE` or `LOWER(col) = LOWER(val)` for all text filters.
 
+            5. **Hierarchies**
+            • If the question involves hierarchy, include all levels:
+                - `l1`, `l2`, `l3`, `l4`, `l5` from the `hierarchy` table.
 
-        Ambiguity Handling:
-        If the user query is ambiguous, choose the most complete logical period (e.g., last full month, current year-to-date).
-        If unsure of exact intent, prefer retrieving full datasets rather than partial ones.
-        
-        This provides key details extracted from the user's query to help generate accurate SQL. You can reference the following information: {db_query}.
-        
-        Similar User Queries & Corresponding SQL Responses
-        The examples below are past user queries along with correct SQL responses.
-        Use them to learn structure and intent, not for copy-pasting.
+            6. **Contextual Enrichment**
+            • If fetching metrics (`spend`, `forecast`, `usage`, etc.), include useful grouping fields:
+                - `cost_center`, `cloud_provider`, `owner`, `category`, etc. if present.
 
-        {chroma_results}
+            ────────────────────────────────────────────────────────
+            COMMON PITFALLS TO AVOID
 
-        Use these queries only as reference patterns.
-        DO NOT copy any example unless it exactly matches the current request.
+            | Pitfall                             | Example                                             |
+            |------------------------------------|-----------------------------------------------------|
+            | Trusting column names over types   | Using `EXTRACT()` on `fiscal_year` that's VARCHAR   |
+            | Assuming joins not based on FK     | Manual guesses instead of schema-enforced joins     |
+            | Case-sensitive text comparison     | Using `=` instead of `ILIKE`                        |
+            | SELECT *                           | Always specify fields explicitly                    |
+            | Missing key grouping fields        | Omitting `cloud_provider`, `cost_center`, etc.      |
 
-        Adapt and generate the correct SQL based on schema, relationships, and current query only.
+            ────────────────────────────────────────────────────────
+            SIMILAR QUERIES REFERENCE 
+            {{
+                user_query:  List yearly wise spend for Infrastructure hierarchy,
+                sql : 'SELECT
+                        monthly_forecast.fiscal_year AS fiscal_year,
+                        SUM(monthly_forecast.spend) AS total_spend
+                    FROM
+                        monthly_forecast
+                    JOIN
+                        hierarchy ON monthly_forecast.hierarchy_id = hierarchy.id
+                    WHERE
+                        hierarchy.l1 ILIKE 'Infrastructure'
+                    GROUP BY
+                        fiscal_year
+                    ORDER BY
+                        fiscal_year;',
+            }}
+            {chroma_results}
+
+            Use these for structure & logic. Never copy unless the meaning matches exactly.
+
+            ────────────────────────────────────────────────────────
+            Now, generate the PostgreSQL SQL query based on the schema and the interpreted intent.
         """),
         ("user", "{input}")
     ])

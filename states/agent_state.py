@@ -14,3 +14,4 @@ class AgentState(BaseModel):
     error: Optional[str] = None
     final_response: Optional[AIMessage | HumanMessage] = None
     loop_count: Optional[int] = 0
+    pdf_bytes: Optional[bytes] = None

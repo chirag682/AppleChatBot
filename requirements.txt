@@ -24,3 +24,6 @@ langchain_neo4j
 pinecone
 langchain-chroma
 psycopg2
+plotly
+fpdf
+kaleido

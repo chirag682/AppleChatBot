@@ -1,16 +1,18 @@
 # decimal_encoder.py
 import json
+from datetime import datetime, date
 from decimal import Decimal
 
 class DecimalEncoder(json.JSONEncoder):
     """
-    Custom JSON encoder that converts Decimal to float.
+    Custom JSON encoder that converts Decimal to float and datetime/date to ISO strings.
     """
     def default(self, obj):
         if isinstance(obj, Decimal):
             return float(obj)
+        elif isinstance(obj, (datetime, date)):
+            return obj.isoformat()
         return super().default(obj)
-
 
 def convert_decimals(obj):
     """

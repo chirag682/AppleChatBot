@@ -33,6 +33,13 @@ with main_col:
             final_response = step
 
         st.session_state.message_history.append(final_response["respond"]["final_response"])
+        if "pdf_bytes" in final_response["respond"] and final_response["respond"]["pdf_bytes"]:
+            st.download_button(
+                label="📄 Download PDF Report",
+                data=final_response["respond"]["pdf_bytes"],
+                file_name="query_report.pdf",
+                mime="application/pdf"
+            )
 
     for i in range(1, len(st.session_state.message_history) + 1):
         this_message = st.session_state.message_history[-i]
