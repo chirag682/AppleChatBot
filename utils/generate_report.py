@@ -18,7 +18,7 @@ def write_formatted_text(text, pdf):
 
 def generate_pdf_report(user_query: str, analysis: str, fig) -> bytes:
     # Convert Plotly figure to PNG image bytes
-    image_bytes = to_image(fig, format="png", width=1000, height=400)
+    image_bytes = to_image(fig, format="png", width=1000, height=800)
 
     # Save image temporarily
     with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_img:

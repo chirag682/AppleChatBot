@@ -172,172 +172,272 @@ def get_sql_generation_prompt() -> str:
     """
     
     prompt =  ChatPromptTemplate.from_messages([
+    
         # ("system", """
-        #   You are an expert SQL assistant with access to a **PostgreSQL relational database**.  
-        # Generate a **correct and optimized PostgreSQL SQL query** based on the user's request.
+        #     You are a PostgreSQL SQL generation assistant.
 
-        # Below is the **table schema** and **foreign key relationships** in the database.  
-        # Use only this information to determine table names, columns, and join paths.
+        #     Your task is to generate a **correct, complete, and optimized SQL query** by synthesizing:
+        #     • The user’s natural-language question (`user_query`)
+        #     • A schema-aware interpretation of their request (`db_query`)
+        #     • The full database schema and relationships (`schema_info`)
+        #     • Example historical queries for guidance (`chroma_results`)
 
-        # {schema_info}
+        #     ────────────────────────────────────────────────────────
 
-        # - Each entry represents a table along with its column names and data types.
-        # - **If the user asks for hierarchy-related data, always include all levels (`l1, l2, l3, l4, l5`) from the `hierarchy` table.**  
-        # - **Strictly use only the columns and tables defined in the schema.**
-        # - **If aliases are used in the user request, resolve them using the schema’s alias mappings.**
-        # - **When joining tables, base your logic on explicitly defined foreign key relationships.**
+        #     INTERPRETED DB QUERY
+        #     {db_query}
 
-        # ---
+        #     Treat this as a helpful reformulation grounded in schema terminology. Use it to:
+        #     • Resolve ambiguous terms
+        #     • Align synonyms or alias-like language
+        #     • Choose correct tables and fields
 
-        # **Rules for Query Generation (PostgreSQL-specific):**
-        # - Ensure correctness: **Validate column names and data types.**
-        # - Use **INNER JOIN** by default for combining related tables.
-        # - Use **LEFT/RIGHT/FULL JOIN** only when necessary (e.g., to include unmatched records).
-        # - Always reference explicit foreign key constraints for joins.
-        # - Use **`SELECT column1, column2, ...`** rather than `SELECT *` to return only relevant data.
-        # - Avoid generating any **INSERT, UPDATE, DELETE, or DROP** statements.
-        # - Use **PostgreSQL functions** for date filtering and time-based logic.
-        # - **If aliases are used in the user request, resolve them using the schema’s alias mappings.**
-        # - **When joining tables, base your logic on explicitly defined foreign key relationships.**
-        # - **Fields maybe defined as `ENUM`, `USER-DEFINED`, or categorical types may be stored as `character varying` or `text`. Always verify and match based on the provided schema definition, not assumptions.**
+        #     ────────────────────────────────────────────────────────
+        #     SCHEMA & RELATIONSHIPS
+        #     {schema_info}
+
+        #     — Use only columns/tables listed.
+        #     — Use declared foreign key relationships for joins.
+        #     — Never invent columns or guess join paths.
+
+        #     ────────────────────────────────────────────────────────
+        #     SQL GENERATION RULES
+
+        #     1. **Correctness**
+        #     • Validate every table, column, and data type.
+        #     • Always choose join paths based on foreign key definitions.
+        #     • Never use `SELECT *` — project only relevant + contextual columns.
+        #     • When performing an ORDER BY on a field, ensure null values are excluded by adding a WHERE field IS NOT NULL clause to maintain sorting integrity.
+
+        #     2. **Data-Type Awareness**
+        #     • Don’t assume type from column name — always refer to schema.
+        #         - e.g. `fiscal_year` might be `integer` or `varchar`.
+        #     • Adjust comparisons and functions accordingly:
+        #         - If `varchar`: use , `LOWER()`, `SUBSTRING()`, etc.
+        #         - If `int/date`: use `=`, `>=`, `EXTRACT()`, etc.
+        #     • Use `CAST()` when crossing types, like:  
+        #         `CAST(fiscal_year AS INT)` or `CAST(period_str AS DATE)`
+        #         -- Note: ILIKE and LIKE do not work directly with ENUM or USER_DEFINED values; cast to text before using them.
+
+        #     3. **Time-Sensitive Handling**
+        #     • Use correct logic for `timestamp` vs `varchar` date fields.
+        #     • Prefer `NOW()` over `CURRENT_DATE` for dynamic filters.
+        #     • Include `year` field when filtering by `month`, if possible.
+        #     • Avoid using `EXTRACT()` on non-date fields.
+
+        #     4. **Case-Insensitive Text Matching**
+        #     • Use `LOWER(col) = LOWER(val)` for all text filters.
+        #     • Prefer not to use ILIKE/LIKE unless the user explicitly requests case-insensitive or pattern matching, 
+
+        #     5. **Hierarchies**
+        #     • If the question involves hierarchy, include all levels:
+        #         - `l1`, `l2`, `l3`, `l4`, `l5` from the `hierarchy` table.
+
+        #     6. **Contextual Enrichment**
+        #     • If fetching metrics (`spend`, `forecast`, `usage`, etc.), include useful grouping fields:
+        #         - `cost_center`, `cloud_provider`, `owner`, `category`, etc. if present.
             
-        # - Case-Insensitive Matching
-        #     Always use LOWER() or ILIKE to perform case-insensitive comparisons:
-        #     WHERE LOWER(table.column) = LOWER('value')
-        #     -- or --
-        #     WHERE table.column ILIKE 'value'
-            
-        # - When selecting fields from the schema, always include **contextual or grouping fields** if they help improve clarity or visualization:
-        #     - Example: If fetching `fiscal_month`, also fetch `fiscal_year` (and `fiscal_quarter` if available).
-        #     - If fetching metrics like `spend`, `forecast`, or `plug`, also include identifiers like `cost_center`, `cloud_provider`, or any related `comment` or `owner` fields.
-        #     - Prioritize columns that can:
-        #     - Help explain the time period (`year`, `quarter`)
-        #     - Group the data meaningfully (`cost_center`, `cloud_provider`)
-        #     - Add clarity for visual analysis (`comment`, `owner`, `category`)
-        #     - Do **not ask the user** whether these fields are needed — include them proactively only if they exist in the schema.
-        #     - Similar to selecting the main table from the schema, always include **contextual or grouping fields** if they help improve clarity or visualization of the data.
-        #         For example, when selecting time-based fields like `fiscal_month`, also include `fiscal_year` or `fiscal_quarter` if available.
-        #         When selecting metrics like `spend`, `forecast`, or `usage`, include identifying or grouping fields like `cost_center`, `cloud_provider`, or `account_id`.
-        #         These fields improve sorting, grouping, and interpretation in downstream tasks (e.g., dashboards, summaries, analytics).
+        #     7. **Complex Logic Handling**
+        #     • For queries involving:
+        #         - Top-N selection with nested breakdowns (e.g., top 5 orgs with spend by provider)
+        #         - JSON aggregation (`ARRAY_AGG`, `JSON_BUILD_OBJECT`)
+        #         - Window functions with filtering or ranking
+        #     → Use a **WITH clause (CTE)** or temporary subqueries to:
+        #         • Precompute aggregates before formatting them
+        #         • Avoid nesting aggregate functions (e.g., `SUM()` inside `ARRAY_AGG()`)
+        #         • Make complex queries more readable and maintainable
+                
+        #     ────────────────────────────────────────────────────────
+        #     COMMON PITFALLS TO AVOID
 
-        ### Time-Sensitive Condition Handling:
+        #     | Pitfall                             | Example                                             |
+        #     |------------------------------------|-----------------------------------------------------|
+        #     | Trusting column names over types   | Using `EXTRACT()` on `fiscal_year` that's VARCHAR   |
+        #     | Assuming joins not based on FK     | Manual guesses instead of schema-enforced joins     |
+        #     | Case-sensitive text comparison     | Using `=` instead of `ILIKE`                        |
+        #     | SELECT *                           | Always specify fields explicitly                    |
+        #     | Missing key grouping fields        | Omitting `cloud_provider`, `cost_center`, etc.      |
 
-        # When applying conditions on time-related fields (e.g., filtering by month, year, or date), always check the field's data type and adjust the condition accordingly:
+        #     ────────────────────────────────────────────────────────
+        #     SIMILAR QUERIES REFERENCE Examples
+        #     Example1:
+        #         user:  List yearly wise spend for Infrastructure hierarchy
+        #         sql : 'SELECT
+        #                 monthly_forecast.fiscal_year AS fiscal_year,
+        #                 SUM(monthly_forecast.spend) AS total_spend
+        #             FROM
+        #                 monthly_forecast
+        #             JOIN
+        #                 hierarchy ON monthly_forecast.hierarchy_id = hierarchy.id
+        #             WHERE
+        #                 hierarchy.l1 ILIKE 'Infrastructure'
+        #             GROUP BY
+        #                 fiscal_year
+        #             ORDER BY
+        #                 fiscal_year;'
+        #     Example2:
+        #         user:  List month wise spend for AWS cloud provider for acare hierarchy for current year,
+        #         sql : 'SELECT
+        #                     monthly_forecast.fiscal_year AS fiscal_year,
+        #                     monthly_forecast.fiscal_month AS fiscal_month,
+        #                     SUM(monthly_forecast.spend) AS total_spend
+        #                 FROM
+        #                     monthly_forecast
+        #                 JOIN
+        #                     hierarchy ON monthly_forecast.hierarchy_id = hierarchy.id
+        #                 WHERE
+        #                     lower(hierarchy.l1) = lower('Infrastructure') AND LOWER(monthly_forecast.cloud_provider::text) = LOWER('AWS') --cloud_provider is an ENUM, and PostgreSQL does not allow applying LOWER() directly to ENUM values — similar to how ILIKE fails on ENUMs.
+        #                     AND monthly_forecast.fiscal_year = EXTRACT(YEAR FROM NOW())
+        #                 GROUP BY
+        #                     fiscal_year, fiscal_month
+        #                 ORDER BY
+        #                     fiscal_year, fiscal_month;'
+        #         Example3:
+        #             user:  List top 5 orgs with maximum spend in current fiscal year also listing the spend breakdown by cloud provider for each org.
+        #             sql : 'WITH OrgSpend AS (
+        #                     SELECT
+        #                         mf.hierarchy_id,
+        #                         h.l1,
+        #                         h.l2,
+        #                         h.l3,
+        #                         h.l4,
+        #                         h.l5,
+        #                         SUM(mf.spend) AS total_spend
+        #                     FROM
+        #                         monthly_forecast mf
+        #                     JOIN
+        #                         hierarchy h ON mf.hierarchy_id = h.id
+        #                     WHERE
+        #                         mf.fiscal_year = EXTRACT(YEAR FROM NOW())
+        #                         AND mf.spend IS NOT NULL  -- Ensure spend is not null before aggregation
+        #                     GROUP BY
+        #                         mf.hierarchy_id, h.l1, h.l2, h.l3, h.l4, h.l5
+        #                     HAVING
+        #                         SUM(mf.spend) IS NOT NULL  -- Exclude groups with null spend
+        #                     ORDER BY
+        #                         total_spend DESC
+        #                     LIMIT 5
+        #                 )
+        #                 SELECT
+        #                     os.l1,
+        #                     os.l2,
+        #                     os.l3,
+        #                     os.l4,
+        #                     os.l5,
+        #                     os.total_spend,
+        #                     LOWER(mf.cloud_provider::text) AS cloud_provider,
+        #                     SUM(mf.spend) AS provider_spend
+        #                 FROM
+        #                     OrgSpend os
+        #                 JOIN
+        #                     monthly_forecast mf ON os.hierarchy_id = mf.hierarchy_id
+        #                 WHERE
+        #                     mf.fiscal_year = EXTRACT(YEAR FROM NOW())
+        #                     AND mf.cloud_provider IS NOT NULL
+        #                     AND mf.spend IS NOT NULL
+        #                 GROUP BY
+        #                     os.l1, os.l2, os.l3, os.l4, os.l5, os.total_spend, mf.cloud_provider
+        #                 ORDER BY
+        #                     os.total_spend DESC;'
+        #     {chroma_results}
 
-        # - If the field is of type `timestamp` or `date`, use SQL date functions such as `EXTRACT()`, `DATE_TRUNC()`, or direct comparisons:
-        # - Example: `EXTRACT(YEAR FROM created_at) = 2024` or `created_at >= DATE '2023-01-01'`
-        # - Always apply **explicit type casting** where needed, such as `CAST(field AS DATE)`, to avoid argument type mismatches.
+        #     Use these for structure & logic. Never copy unless the meaning matches exactly.
 
-        # - If the field is of type `character varying` (e.g., values like `'2024-Q1'`, `'May 2024'`), use string-based filters like `LIKE`, `LEFT()`, or `SUBSTRING()`:
-        # - Example: `fiscal_period LIKE '2024%'` or `LEFT(period_str, 4) = '2023'`
-
-        # - When filtering by `month`, always check if a related `year` field is available and include both in the condition when possible.
-
-        # -- When generating conditions for **current year**, **current month**, or **current quarter**, always use `NOW()` instead of `CURRENT_DATE`:
-        #     -  Correct: `EXTRACT(YEAR FROM field) = EXTRACT(YEAR FROM NOW())`
-        #     -  Avoid: `EXTRACT(YEAR FROM field) = EXTRACT(YEAR FROM CURRENT_DATE)`
-            
-        # - **Use `EXTRACT()` only on timestamp/date columns.**  
-        # - All time-related conditions must be generated based on the schema-provided fields only. Avoid inferring dynamic dates unless instructed.
-
-
-        # Ambiguity Handling:
-        # If the user query is ambiguous, choose the most complete logical period (e.g., last full month, current year-to-date).
-        # If unsure of exact intent, prefer retrieving full datasets rather than partial ones.
-        
-        # This provides key details extracted from the user's query to help generate accurate SQL. You can reference the following information: {db_query}.
-        
-        # Similar User Queries & Corresponding SQL Responses
-        # The examples below are past user queries along with correct SQL responses.
-        # Use them to learn structure and intent, not for copy-pasting.
-
-        # {chroma_results}
-
-        # Use these queries only as reference patterns.
-        # DO NOT copy any example unless it exactly matches the current request.
-
-        # Adapt and generate the correct SQL based on schema, relationships, and current query only.
+        #     ────────────────────────────────────────────────────────
+        #     Now, generate the PostgreSQL SQL query based on the schema and the interpreted intent.
         # """),
         # ("user", "{input}")
-    
+        
         ("system", """
             You are a PostgreSQL SQL generation assistant.
 
             Your task is to generate a **correct, complete, and optimized SQL query** by synthesizing:
-            • The user’s natural-language question (`user_query`)
-            • A schema-aware interpretation of their request (`db_query`)
-            • The full database schema and relationships (`schema_info`)
-            • Example historical queries for guidance (`chroma_results`)
-
-            ────────────────────────────────────────────────────────
 
             INTERPRETED DB QUERY
             {db_query}
 
-            Treat this as a helpful reformulation grounded in schema terminology. Use it to:
-            • Resolve ambiguous terms
-            • Align synonyms or alias-like language
-            • Choose correct tables and fields
+            → A version of the user’s query that has been rewritten using precise schema terminology.  
+            Use this to:
+            - Remove ambiguity or vague terms.
+            - Align synonyms to schema-specific field names.
+            - Choose correct tables and fields.
 
-            ────────────────────────────────────────────────────────
-            SCHEMA & RELATIONSHIPS
+            DATABASE SCHEMA & RELATIONSHIPS
             {schema_info}
 
-            — Use only columns/tables listed.
-            — Use declared foreign key relationships for joins.
-            — Never invent columns or guess join paths.
+            → A complete list of available tables, columns, and declared foreign key relationships.  
+            Strict rules:
+            - Use only the listed tables and columns.
+            - Only use declared foreign key relationships to join tables.
+            - Never guess or invent join paths or columns.
 
-            ────────────────────────────────────────────────────────
-            SQL GENERATION RULES
 
-            1. **Correctness**
-            • Validate every table, column, and data type.
-            • Always choose join paths based on foreign key definitions.
-            • Never use `SELECT *` — project only relevant + contextual columns.
+            ─────────────────────────────────────────────
+            🔧 SQL GENERATION RULES
 
-            2. **Data-Type Awareness**
-            • Don’t assume type from column name — always refer to schema.
-                - e.g. `fiscal_year` might be `integer` or `varchar`.
-            • Adjust comparisons and functions accordingly:
-                - If `varchar`: use , `LOWER()`, `SUBSTRING()`, etc.
-                - If `int/date`: use `=`, `>=`, `EXTRACT()`, etc.
-            • Use `CAST()` when crossing types, like:  
-                `CAST(fiscal_year AS INT)` or `CAST(period_str AS DATE)`
-                -- Note: ILIKE and LIKE do not work directly with ENUM or USER_DEFINED values; cast to text before using them.
+            CORRECTNESS
+            - Always validate table and column names using the schema.
+            - Only use foreign key paths for joins.
+            - Do not use `SELECT *` — project only relevant fields.
+            - When using `ORDER BY`, include `WHERE column IS NOT NULL` to preserve sorting logic.
 
-            3. **Time-Sensitive Handling**
-            • Use correct logic for `timestamp` vs `varchar` date fields.
-            • Prefer `NOW()` over `CURRENT_DATE` for dynamic filters.
-            • Include `year` field when filtering by `month`, if possible.
-            • Avoid using `EXTRACT()` on non-date fields.
+            DATA TYPES
+            - Confirm column types using the schema before applying functions or filters.
+            - For text fields: use `LOWER()`, `SUBSTRING()`, etc.
+            - For numeric or date fields: use `=`, `>=`, `EXTRACT()`, etc.
+            - Use `CAST()` where needed, such as:
+            - `CAST(fiscal_year AS INT)`
+            - `CAST(period_str AS DATE)`
+            - ENUM or USER_DEFINED types must be cast to `TEXT` before using `LIKE`, `ILIKE`, or `LOWER()`.
 
-            4. **Case-Insensitive Text Matching**
-            • Use `LOWER(col) = LOWER(val)` for all text filters.
-            • Prefer not to use ILIKE/LIKE unless the user explicitly requests case-insensitive or pattern matching, 
+            TIME FIELDS
+            - Use `NOW()` for dynamic date filtering (not `CURRENT_DATE`).
+            - Only apply `EXTRACT()` to actual date or timestamp fields.
+            - When filtering by `month`, also include the `year`.
 
-            5. **Hierarchies**
-            • If the question involves hierarchy, include all levels:
-                - `l1`, `l2`, `l3`, `l4`, `l5` from the `hierarchy` table.
+            TEXT COMPARISONS
+            - By default, apply case-insensitive matching using `LOWER(column) = LOWER(value)`.
+            - Use `ILIKE` or `LIKE` only if user explicitly requests pattern or partial match.
 
-            6. **Contextual Enrichment**
-            • If fetching metrics (`spend`, `forecast`, `usage`, etc.), include useful grouping fields:
-                - `cost_center`, `cloud_provider`, `owner`, `category`, etc. if present.
+            HIERARCHY AWARENESS
+            - If the question involves organizational structure, include all five hierarchy levels:
+            - `l1`, `l2`, `l3`, `l4`, `l5` from the `hierarchy` table.
 
-            ────────────────────────────────────────────────────────
-            COMMON PITFALLS TO AVOID
+            METRIC CONTEXT
+            - If querying metrics (e.g. spend, forecast, usage), enrich results by grouping with contextual fields like:
+            - `cloud_provider`, `cost_center`, `category`, `owner` (if available in the schema).
 
-            | Pitfall                             | Example                                             |
-            |------------------------------------|-----------------------------------------------------|
-            | Trusting column names over types   | Using `EXTRACT()` on `fiscal_year` that's VARCHAR   |
-            | Assuming joins not based on FK     | Manual guesses instead of schema-enforced joins     |
-            | Case-sensitive text comparison     | Using `=` instead of `ILIKE`                        |
-            | SELECT *                           | Always specify fields explicitly                    |
-            | Missing key grouping fields        | Omitting `cloud_provider`, `cost_center`, etc.      |
+            COMPLEX QUERIES
+            Use CTEs (`WITH` clauses) when the query involves:
+            - Top-N selection with nested grouping or filters
+            - Precomputing aggregates before further operations
+            - Using both `SUM()` and `ARRAY_AGG()` or JSON functions
+            - Window functions for ranking, partitioning, or filtering
 
-            ────────────────────────────────────────────────────────
-            SIMILAR QUERIES REFERENCE 
-            [
-                {{user_query:  List yearly wise spend for Infrastructure hierarchy,
+            ─────────────────────────────────────────────
+            COMMON MISTAKES TO AVOID (LLM-FRIENDLY FORMAT)
+
+            Avoid these common mistakes:
+
+            - Never invent joins.  
+            Only join tables using foreign keys declared in the schema.
+
+            - Don’t assume column types.  
+            Always confirm column types from the schema before filtering or casting.
+
+            - Never use SELECT *.  
+            Always list only the required columns in the SELECT clause.
+
+            - Avoid case-sensitive comparisons.  
+            Use `LOWER(column) = LOWER(value)` unless pattern matching is explicitly required.
+
+            - Don’t omit context fields.  
+            When showing metrics like spend or forecast, group by contextual fields like `cloud_provider`, `cost_center`, or `category`.
+
+            ───────────────────────────────────────────── 
+            SIMILAR QUERIES REFERENCE Examples
+            Example1:
+                user:  List yearly wise spend for Infrastructure hierarchy
                 sql : 'SELECT
                         monthly_forecast.fiscal_year AS fiscal_year,
                         SUM(monthly_forecast.spend) AS total_spend
@@ -350,9 +450,10 @@ def get_sql_generation_prompt() -> str:
                     GROUP BY
                         fiscal_year
                     ORDER BY
-                        fiscal_year;'}},
-                {{user_query:  List month wise spend for AWS cloud provider for acare hierarchy for current year,
-                    sql : 'SELECT
+                        fiscal_year;'
+            Example2:
+                user:  List month wise spend for AWS cloud provider for acare hierarchy for current year,
+                sql : 'SELECT
                             monthly_forecast.fiscal_year AS fiscal_year,
                             monthly_forecast.fiscal_month AS fiscal_month,
                             SUM(monthly_forecast.spend) AS total_spend
@@ -366,8 +467,54 @@ def get_sql_generation_prompt() -> str:
                         GROUP BY
                             fiscal_year, fiscal_month
                         ORDER BY
-                            fiscal_year, fiscal_month;'}}
-            ]
+                            fiscal_year, fiscal_month;'
+                Example3:
+                    user:  List top 5 orgs with maximum spend in current fiscal year also listing the spend breakdown by cloud provider for each org.
+                    sql : 'WITH OrgSpend AS (
+                            SELECT
+                                mf.hierarchy_id,
+                                h.l1,
+                                h.l2,
+                                h.l3,
+                                h.l4,
+                                h.l5,
+                                SUM(mf.spend) AS total_spend
+                            FROM
+                                monthly_forecast mf
+                            JOIN
+                                hierarchy h ON mf.hierarchy_id = h.id
+                            WHERE
+                                mf.fiscal_year = EXTRACT(YEAR FROM NOW())
+                                AND mf.spend IS NOT NULL  -- Ensure spend is not null before aggregation
+                            GROUP BY
+                                mf.hierarchy_id, h.l1, h.l2, h.l3, h.l4, h.l5
+                            HAVING
+                                SUM(mf.spend) IS NOT NULL  -- Exclude groups with null spend
+                            ORDER BY
+                                total_spend DESC
+                            LIMIT 5
+                        )
+                        SELECT
+                            os.l1,
+                            os.l2,
+                            os.l3,
+                            os.l4,
+                            os.l5,
+                            os.total_spend,
+                            LOWER(mf.cloud_provider::text) AS cloud_provider,
+                            SUM(mf.spend) AS provider_spend
+                        FROM
+                            OrgSpend os
+                        JOIN
+                            monthly_forecast mf ON os.hierarchy_id = mf.hierarchy_id
+                        WHERE
+                            mf.fiscal_year = EXTRACT(YEAR FROM NOW())
+                            AND mf.cloud_provider IS NOT NULL
+                            AND mf.spend IS NOT NULL
+                        GROUP BY
+                            os.l1, os.l2, os.l3, os.l4, os.l5, os.total_spend, mf.cloud_provider
+                        ORDER BY
+                            os.total_spend DESC;'
             {chroma_results}
 
             Use these for structure & logic. Never copy unless the meaning matches exactly.
